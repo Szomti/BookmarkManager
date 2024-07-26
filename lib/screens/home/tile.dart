@@ -1,11 +1,17 @@
 part of 'library.dart';
 
 class _TileWidget extends StatefulWidget {
+  final Bookmark bookmark;
+
+  const _TileWidget(this.bookmark);
+
   @override
   State<StatefulWidget> createState() => _TileWidgetState();
 }
 
 class _TileWidgetState extends State<_TileWidget> {
+  Bookmark get _bookmark => widget.bookmark;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -14,44 +20,97 @@ class _TileWidgetState extends State<_TileWidget> {
         color: const Color(0xFF757575),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        children: [
-          const Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'data',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Color(0xFFD8D8D8),
+      child: ListenableBuilder(
+        listenable: _bookmark,
+        builder: (BuildContext context, Widget? child) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _bookmark.text,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Color(0xFFD8D8D8),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              _createBtn(Icons.remove, () {}),
-              const Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '0',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Color(0xFFD8D8D8),
+                Row(
+                  children: [
+                    _createBtn(Icons.remove, () => _changeChapter(-1)),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'Chapter: ${_bookmark.chapter.info}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFFD8D8D8),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    _createBtn(Icons.add, () => _changeChapter(1)),
+                  ],
                 ),
+                Row(
+                  children: [
+                    _createEditBaseBtn('Sub Chapter', Icons.edit_note, () {}),
+                    _createEditBaseBtn('Full Edit', Icons.edit, () {}),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _changeChapter(int value) {
+    _bookmark.chapter = Chapter(
+      main: _bookmark.chapter.main + value,
+    );
+  }
+
+  Widget _createEditBaseBtn(
+    String text,
+    IconData icon,
+    void Function() onTap,
+  ) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFF8E8E8E),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Row(
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFFD8D8D8),
               ),
-              _createBtn(Icons.add, () {}),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              icon,
+              color: const Color(0xFFD8D8D8),
+              size: 18,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -60,10 +119,10 @@ class _TileWidgetState extends State<_TileWidget> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: const Padding(
-        padding: EdgeInsets.all(8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Icon(
-          Icons.remove,
+          icon,
           color: Colors.white,
           size: 32,
         ),

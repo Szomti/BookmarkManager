@@ -10,20 +10,39 @@ class BookmarksStorage {
   static const _countKey = 'BOOKMARKS_COUNT';
   static const _defaultCount = 0;
   static final instance = BookmarksStorage._();
-  static final Iterable<Bookmark> _items = SplayTreeSet<Bookmark>();
+  static final SplayTreeSet<Bookmark> _items = SplayTreeSet<Bookmark>();
   static int count = _defaultCount;
 
   BookmarksStorage._();
 
-  Iterable<Bookmark> get items => _items.toList();
+  Iterable<Bookmark> get items => [
+        Bookmark(
+          id: 1,
+          text: 'Damn',
+          ordinal: 1,
+          chapter: Chapter(main: 1, sub: '.5'),
+        ),
+        Bookmark(
+          id: 2,
+          text: 'Damn',
+          ordinal: 2,
+          chapter: Chapter(main: 1, sub: ' Bonus'),
+        ),
+        Bookmark(
+          id: 3,
+          text: 'Damn',
+          ordinal: 3,
+          chapter: Chapter(main: 1),
+        ),
+      ]; //_items.toList();
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     count = prefs.getInt(_countKey) ?? _defaultCount;
     final iterable = prefs.getStringList(_iterableKey) ?? [];
-    final tempItems = SplayTreeSet<Bookmark>();
+    _items.clear();
     for (final item in iterable) {
-      tempItems.add(
+      _items.add(
         Bookmark.fromJson(json.decode(item) as Map<String, Object?>),
       );
     }

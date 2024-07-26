@@ -1,27 +1,31 @@
-class Bookmark {
+import 'package:flutter/material.dart';
+
+class Bookmark with ChangeNotifier {
   static const _idKey = 'id';
   static const _textKey = 'text';
   static const _ordinalKey = 'ordinal';
   static const _chapterKey = 'chapter';
 
   final int id;
-  final String text;
-  final int ordinal;
-  final Chapter chapter;
+  String _text;
+  int _ordinal;
+  Chapter _chapter;
 
   Bookmark({
     required this.id,
-    required this.text,
-    required this.ordinal,
-    required this.chapter,
-  });
+    required String text,
+    required int ordinal,
+    required Chapter chapter,
+  })  : _text = text,
+        _ordinal = ordinal,
+        _chapter = chapter;
 
   Map<String, Object?> toJson() {
     return {
       _idKey: id,
-      _textKey: text,
-      _ordinalKey: ordinal,
-      _chapterKey: chapter.toJson(),
+      _textKey: _text,
+      _ordinalKey: _ordinal,
+      _chapterKey: _chapter.toJson(),
     };
   }
 
@@ -34,20 +38,43 @@ class Bookmark {
       identical(this, other) ||
       other is Bookmark && runtimeType == other.runtimeType && id == other.id;
 
+  String get text => _text;
+
+  set text(String value) {
+    _text = value;
+    notifyListeners();
+  }
+
   @override
   int get hashCode => id.hashCode;
+
+  int get ordinal => _ordinal;
+
+  set ordinal(int value) {
+    _ordinal = value;
+    notifyListeners();
+  }
+
+  Chapter get chapter => _chapter;
+
+  set chapter(Chapter value) {
+    _chapter = value;
+    notifyListeners();
+  }
 }
 
 class Chapter {
   static const _mainKey = 'main';
   static const _subKey = 'sub';
 
-  final int main;
-  final int sub;
+  int main;
+  String sub;
+
+  String get info => '$main$sub';
 
   Chapter({
     required this.main,
-    required this.sub,
+    this.sub = '',
   });
 
   Map<String, Object?> toJson() {
