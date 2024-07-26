@@ -15,9 +15,9 @@ class _TileWidgetState extends State<_TileWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.all(16).copyWith(bottom: 0),
       decoration: BoxDecoration(
-        color: const Color(0xFF757575),
+        color: const Color(0xFF656565),
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListenableBuilder(
@@ -31,9 +31,9 @@ class _TileWidgetState extends State<_TileWidget> {
                   children: [
                     Expanded(
                       child: Text(
-                        _bookmark.text,
+                        _bookmark.title,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           color: Color(0xFFD8D8D8),
                         ),
                       ),
@@ -50,7 +50,7 @@ class _TileWidgetState extends State<_TileWidget> {
                           'Chapter: ${_bookmark.chapter.info}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 13,
                             color: Color(0xFFD8D8D8),
                           ),
                         ),
@@ -63,6 +63,11 @@ class _TileWidgetState extends State<_TileWidget> {
                   children: [
                     _createEditBaseBtn('Sub Chapter', Icons.edit_note, () {}),
                     _createEditBaseBtn('Full Edit', Icons.edit, () {}),
+                    _createEditBaseBtn(
+                      'Delete',
+                      Icons.delete_forever,
+                      () => BookmarksStorage.instance.removeBookmark(_bookmark),
+                    ),
                   ],
                 ),
               ],
@@ -91,7 +96,7 @@ class _TileWidgetState extends State<_TileWidget> {
         margin: const EdgeInsets.all(4.0),
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
-          color: const Color(0xFF8E8E8E),
+          color: const Color(0xFF7E7E7E),
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Row(
@@ -120,11 +125,20 @@ class _TileWidgetState extends State<_TileWidget> {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 32,
+        padding: const EdgeInsets.all(4.0),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF7E7E7E),
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
         ),
       ),
     );

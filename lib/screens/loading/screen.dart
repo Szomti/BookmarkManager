@@ -11,12 +11,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.delayed(const Duration(milliseconds: 250));
-      if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      await _handleLoading();
     });
     super.initState();
   }
@@ -46,11 +41,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 
-  Future<void> handleLoading() async {
+  Future<void> _handleLoading() async {
     BookmarksStorage.instance.load();
     await Future.delayed(const Duration(milliseconds: 250));
     if (!mounted) return;
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
     );

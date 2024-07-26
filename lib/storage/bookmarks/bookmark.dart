@@ -1,36 +1,47 @@
+import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
 import 'package:flutter/material.dart';
 
-class Bookmark with ChangeNotifier {
+class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   static const _idKey = 'id';
-  static const _textKey = 'text';
+  static const _titleKey = 'text';
   static const _ordinalKey = 'ordinal';
   static const _chapterKey = 'chapter';
 
   final int id;
-  String _text;
+  String _title;
   int _ordinal;
   Chapter _chapter;
 
   Bookmark({
-    required this.id,
-    required String text,
+    int? id,
+    required String title,
     required int ordinal,
     required Chapter chapter,
-  })  : _text = text,
+  })  : id = BookmarksStorage.count + 1,
+        _title = title,
         _ordinal = ordinal,
-        _chapter = chapter;
+        _chapter = chapter {
+    BookmarksStorage.count += 1;
+  }
 
   Map<String, Object?> toJson() {
     return {
       _idKey: id,
-      _textKey: _text,
+      _titleKey: _title,
       _ordinalKey: _ordinal,
       _chapterKey: _chapter.toJson(),
     };
   }
 
-  static Bookmark fromJson(Map<String, Object?> object) {
-    throw ('Not implemented yet');
+  static Bookmark fromJson(Map<String, Object?> jsonObject) {
+    return Bookmark(
+      id: jsonObject[_idKey] as int,
+      title: jsonObject[_titleKey] as String,
+      ordinal: jsonObject[_ordinalKey] as int,
+      chapter: Chapter.fromJson(
+        jsonObject[_chapterKey] as Map<String, Object?>,
+      ),
+    );
   }
 
   @override
@@ -38,11 +49,11 @@ class Bookmark with ChangeNotifier {
       identical(this, other) ||
       other is Bookmark && runtimeType == other.runtimeType && id == other.id;
 
-  String get text => _text;
+  String get title => _title;
 
-  set text(String value) {
-    _text = value;
-    notifyListeners();
+  set title(String value) {
+    _title = value;
+    _handleEdit();
   }
 
   @override
@@ -52,14 +63,24 @@ class Bookmark with ChangeNotifier {
 
   set ordinal(int value) {
     _ordinal = value;
-    notifyListeners();
+    _handleEdit();
   }
 
   Chapter get chapter => _chapter;
 
   set chapter(Chapter value) {
     _chapter = value;
+    _handleEdit();
+  }
+
+  void _handleEdit() {
     notifyListeners();
+    BookmarksStorage.changeEdited(true);
+  }
+
+  @override
+  int compareTo(Bookmark other) {
+    return ordinal.compareTo(other.ordinal);
   }
 }
 
@@ -82,5 +103,12 @@ class Chapter {
       _mainKey: main,
       _subKey: sub,
     };
+  }
+
+  static Chapter fromJson(Map<String, Object?> jsonObject) {
+    return Chapter(
+      main: jsonObject[_mainKey] as int,
+      sub: jsonObject[_subKey] as String,
+    );
   }
 }
