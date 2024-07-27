@@ -15,16 +15,28 @@ class BookmarksStorage with ChangeNotifier {
   static final SplayTreeSet<Bookmark> _items = SplayTreeSet<Bookmark>();
   static int count = _defaultCount;
   static ValueNotifier<bool> edited = ValueNotifier(false);
+  String _search = '';
 
   BookmarksStorage._();
 
   Iterable<Bookmark> get items => _items.toList();
 
+  Iterable<Bookmark> get searchItems => items.where(
+        (item) => item.title.toLowerCase().contains(_search.toLowerCase()),
+      ).toList();
+
   void clear() {
-    for(final item in _items) {
+    for (final item in _items) {
       item.dispose();
     }
     _items.clear();
+  }
+
+
+  set search(String value) {
+    if(_search == value) return;
+    _search = value;
+    notifyListeners();
   }
 
   Future<void> load() async {
@@ -37,14 +49,14 @@ class BookmarksStorage with ChangeNotifier {
       _items.add(
         Bookmark.fromJson(json.decode(item) as Map<String, Object?>),
       );
-      if(slowDown) await Future.delayed(const Duration(milliseconds: 2));
+      if (slowDown) await Future.delayed(const Duration(milliseconds: 2));
     }
     notifyListeners();
   }
 
   Future<void> addBookmark(Bookmark bookmark) async {
     _items.removeWhere((item) {
-      if(item != bookmark) return false;
+      if (item != bookmark) return false;
       item.dispose();
       return true;
     });
@@ -71,7 +83,7 @@ class BookmarksStorage with ChangeNotifier {
   }
 
   static void changeEdited(bool newValue) {
-    if(edited.value == newValue) return;
+    if (edited.value == newValue) return;
     edited.value = newValue;
   }
 }

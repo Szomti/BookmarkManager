@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 class CustomTextField extends StatelessWidget {
   final String text;
@@ -32,14 +33,16 @@ class CustomTextField extends StatelessWidget {
         labelStyle: const TextStyle(
           color: Color(0xFF9F9F9F),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(
             color: Color(0xFFD8D8D8),
             width: 2.0,
           ),
         ),
-        border: const OutlineInputBorder(
-          borderSide: BorderSide(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(
             color: Color(0xFFD8D8D8),
             width: 2.0,
           ),

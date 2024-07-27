@@ -8,9 +8,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _searchController = TextEditingController();
+
   BookmarksStorage get _storage => BookmarksStorage.instance;
 
-  Iterable<Bookmark> get _bookmarks => _storage.items;
+  Iterable<Bookmark> get _bookmarks => _storage.searchItems;
+
+  @override
+  void initState() {
+    _searchController.addListener(_handleSearchUpdate);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_handleSearchUpdate);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +135,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          'Search',
+                          _searchController,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -128,5 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _handleSearchUpdate() {
+    _storage.search = _searchController.text;
   }
 }
