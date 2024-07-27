@@ -13,15 +13,15 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   Chapter _chapter;
 
   Bookmark({
-    int? id,
+    int? customId,
     required String title,
     required int ordinal,
     required Chapter chapter,
-  })  : id = BookmarksStorage.count + 1,
+  })  : id = customId ?? BookmarksStorage.count + 1,
         _title = title,
         _ordinal = ordinal,
         _chapter = chapter {
-    BookmarksStorage.count += 1;
+    if (customId == null) BookmarksStorage.count += 1;
   }
 
   Map<String, Object?> toJson() {
@@ -35,7 +35,7 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
 
   static Bookmark fromJson(Map<String, Object?> jsonObject) {
     return Bookmark(
-      id: jsonObject[_idKey] as int,
+      customId: jsonObject[_idKey] as int,
       title: jsonObject[_titleKey] as String,
       ordinal: jsonObject[_ordinalKey] as int,
       chapter: Chapter.fromJson(
@@ -43,6 +43,9 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
       ),
     );
   }
+
+  @override
+  int get hashCode => id.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -55,9 +58,6 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     _title = value;
     _handleEdit();
   }
-
-  @override
-  int get hashCode => id.hashCode;
 
   int get ordinal => _ordinal;
 

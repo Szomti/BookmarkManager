@@ -10,6 +10,8 @@ class _TileWidget extends StatefulWidget {
 }
 
 class _TileWidgetState extends State<_TileWidget> {
+  final _subChapterController = TextEditingController();
+
   Bookmark get _bookmark => widget.bookmark;
 
   @override
@@ -21,6 +23,7 @@ class _TileWidgetState extends State<_TileWidget> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListenableBuilder(
+        key: UniqueKey(),
         listenable: _bookmark,
         builder: (BuildContext context, Widget? child) {
           return Padding(
@@ -61,8 +64,69 @@ class _TileWidgetState extends State<_TileWidget> {
                 ),
                 Row(
                   children: [
-                    _createEditBaseBtn('Sub Chapter', Icons.edit_note, () {}),
-                    _createEditBaseBtn('Full Edit', Icons.edit, () {}),
+                    _createEditBaseBtn(
+                      'Sub Chapter',
+                      Icons.edit_note,
+                      () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            _subChapterController.text = _bookmark.chapter.sub;
+                            return Material(
+                              type: MaterialType.transparency,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFF454545),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0)),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CustomTextField(
+                                          'Sub Chapter',
+                                          _subChapterController,
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        _createDialogBtn(
+                                          'Set',
+                                          () {
+                                            _bookmark.chapter = Chapter(
+                                              main: _bookmark.chapter.main,
+                                              sub: _subChapterController.text,
+                                            );
+                                            if (mounted) Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    _createEditBaseBtn(
+                      'Full Edit',
+                      Icons.edit,
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => NewBookmarkScreen(
+                              bookmark: _bookmark,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     _createEditBaseBtn(
                       'Delete',
                       Icons.delete_forever,
@@ -75,6 +139,31 @@ class _TileWidgetState extends State<_TileWidget> {
           );
         },
       ),
+    );
+  }
+
+  Widget _createDialogBtn(String text, void Function() onPressed) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: onPressed,
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(
+                color: Color(0xFFD8D8D8),
+                width: 2.0,
+              ),
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                text,
+                style: const TextStyle(color: Color(0xFFD8D8D8)),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

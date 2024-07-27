@@ -8,7 +8,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Iterable<Bookmark> get _bookmarks => BookmarksStorage.instance.items;
+  BookmarksStorage get _storage => BookmarksStorage.instance;
+
+  Iterable<Bookmark> get _bookmarks => _storage.items;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               child: ListenableBuilder(
-                listenable: BookmarksStorage.instance,
+                listenable: _storage,
                 builder: (BuildContext context, Widget? child) {
                   return ListView.builder(
                     shrinkWrap: true,
@@ -54,44 +56,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Expanded(
-                                      child: OutlinedButton(
-                                        onPressed:
-                                            BookmarksStorage.instance.load,
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                            color: Color(0xFFD8D8D8),
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                        child: const FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: Text(
-                                            'Discard',
-                                            style: TextStyle(
-                                                color: Color(0xFFD8D8D8)),
-                                          ),
-                                        ),
+                                      child: CustomOutlinedButton(
+                                        text: 'Discard',
+                                        onPressed: (ValueNotifier<bool>
+                                            loading) async {
+                                          loading.value = true;
+                                          await BookmarksStorage.instance
+                                              .load();
+                                          await Future.delayed(const Duration(
+                                              milliseconds: 250));
+                                          loading.value = false;
+                                          BookmarksStorage.changeEdited(false);
+                                        },
                                       ),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
-                                      child: OutlinedButton(
-                                        onPressed:
-                                            BookmarksStorage.instance.save,
-                                        style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                            color: Color(0xFFD8D8D8),
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                        child: const FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: Text(
-                                            'Save',
-                                            style: TextStyle(
-                                                color: Color(0xFFD8D8D8)),
-                                          ),
-                                        ),
+                                      child: CustomOutlinedButton(
+                                        text: 'Save',
+                                        onPressed: (ValueNotifier<bool>
+                                            loading) async {
+                                          loading.value = true;
+                                          await BookmarksStorage.instance
+                                              .save();
+                                          await Future.delayed(const Duration(
+                                              milliseconds: 250));
+                                          loading.value = false;
+                                          BookmarksStorage.changeEdited(false);
+                                        },
                                       ),
                                     ),
                                   ],

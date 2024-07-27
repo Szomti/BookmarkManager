@@ -1,123 +1,138 @@
 part of 'library.dart';
 
 class NewBookmarkScreen extends StatefulWidget {
-  const NewBookmarkScreen({super.key});
+  final Bookmark? bookmark;
+
+  const NewBookmarkScreen({this.bookmark, super.key});
 
   @override
   State<StatefulWidget> createState() => _NewBookmarkScreenState();
 }
 
 class _NewBookmarkScreenState extends State<NewBookmarkScreen> {
-  static final _titleController = TextEditingController();
-  static final _chapterController = TextEditingController();
-  static final _subChapterController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _chapterController = TextEditingController();
+  final _subChapterController = TextEditingController();
+
+  Bookmark? get _bookmark => widget.bookmark;
+
+  @override
+  void initState() {
+    _titleController.text = _bookmark?.title ?? '';
+    _chapterController.text = _bookmark?.chapter.main.toString() ?? '';
+    _subChapterController.text = _bookmark?.chapter.sub ?? '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF454545),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _titleController,
-                  style: const TextStyle(color: Color(0xFFD8D8D8)),
-                  decoration: const InputDecoration(
-                    labelText: 'Title',
-                    labelStyle: TextStyle(
-                      color: Color(0xFF9F9F9F),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.all(8.0),
+              decoration: const BoxDecoration(
+                color: Color(0xFF656565),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _bookmark == null ? 'New Bookmark' : 'Edit Bookmark',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
                         color: Color(0xFFD8D8D8),
-                        width: 2.0,
+                        fontSize: 16,
                       ),
                     ),
-                  ),
-                ),
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _chapterController,
-                  style: const TextStyle(color: Color(0xFFD8D8D8)),
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Chapter',
-                    labelStyle: TextStyle(
-                      color: Color(0xFF9F9F9F),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFD8D8D8),
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
-                ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: CustomTextField('Title*', _titleController),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: CustomTextField(
+                'Chapter*',
+                _chapterController,
+                type: TextInputType.number,
+                formatters: [_onlyNumbersFormatter()],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: TextField(
-                  controller: _subChapterController,
-                  style: const TextStyle(color: Color(0xFFD8D8D8)),
-                  decoration: const InputDecoration(
-                    labelText: 'Sub Chapter',
-                    labelStyle: TextStyle(
-                      color: Color(0xFF9F9F9F),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFD8D8D8),
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
-                ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: CustomTextField('Sub Chapter', _subChapterController),
+            ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
               ),
-              const Spacer(),
-              OutlinedButton(
-                onPressed: _saveBookmark,
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Color(0xFFD8D8D8),
-                    width: 2.0,
+              color: const Color(0xFF535353),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomOutlinedButton(
+                      text: 'Cancel',
+                      onPressed: _cancel,
+                    ),
                   ),
-                ),
-                child: const FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    'Save',
-                    style: TextStyle(color: Color(0xFFD8D8D8)),
+                  const SizedBox(width: 16.0),
+                  Expanded(
+                    child: CustomOutlinedButton(
+                      text: 'Save',
+                      onPressed: _saveBookmark,
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Future<void> _saveBookmark() async {
+  TextInputFormatter _onlyNumbersFormatter() {
+    return TextInputFormatter.withFunction(
+      (oldValue, newValue) {
+        if (int.tryParse(newValue.text) == null) return oldValue;
+        return newValue;
+      },
+    );
+  }
+
+  Future<void> _cancel(ValueNotifier<bool> loading) async {
+    if (mounted) Navigator.pop(context);
+  }
+
+  Future<void> _saveBookmark(ValueNotifier<bool> loading) async {
     final title = _titleController.text;
     final chapter = int.tryParse(_chapterController.text);
     final subChapter = _subChapterController.text;
     if (title.isEmpty || chapter == null) return;
+    loading.value = true;
     await BookmarksStorage.instance.addBookmark(
       Bookmark(
+        customId: _bookmark?.id,
         title: title,
-        ordinal: BookmarksStorage.count + 1,
+        ordinal: _bookmark?.ordinal ?? BookmarksStorage.count + 1,
         chapter: Chapter(main: chapter, sub: subChapter),
       ),
     );
-    _titleController.clear();
-    _chapterController.clear();
-    _subChapterController.clear();
+    BookmarksStorage.changeEdited(false);
+    await Future.delayed(const Duration(milliseconds: 250));
+    loading.value = false;
     if (mounted) Navigator.pop(context);
   }
 }

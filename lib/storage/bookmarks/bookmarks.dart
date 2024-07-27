@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'bookmark.dart';
 
 class BookmarksStorage with ChangeNotifier {
+  static const _hugeAmountOfItemsThreshold = 50;
   static const _iterableKey = 'BOOKMARKS_ITERABLE';
   static const _countKey = 'BOOKMARKS_COUNT';
   static const _defaultCount = 0;
@@ -19,21 +20,34 @@ class BookmarksStorage with ChangeNotifier {
 
   Iterable<Bookmark> get items => _items.toList();
 
+  void clear() {
+    for(final item in _items) {
+      item.dispose();
+    }
+    _items.clear();
+  }
+
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     count = prefs.getInt(_countKey) ?? _defaultCount;
     final iterable = prefs.getStringList(_iterableKey) ?? [];
-    _items.clear();
+    final slowDown = iterable.length >= _hugeAmountOfItemsThreshold;
+    clear();
     for (final item in iterable) {
       _items.add(
         Bookmark.fromJson(json.decode(item) as Map<String, Object?>),
       );
+      if(slowDown) await Future.delayed(const Duration(milliseconds: 2));
     }
     notifyListeners();
-    changeEdited(false);
   }
 
   Future<void> addBookmark(Bookmark bookmark) async {
+    _items.removeWhere((item) {
+      if(item != bookmark) return false;
+      item.dispose();
+      return true;
+    });
     _items.add(bookmark);
     await save();
   }
@@ -45,10 +59,9 @@ class BookmarksStorage with ChangeNotifier {
 
   Future<void> save() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setInt(_countKey, count);
-    prefs.setStringList(_iterableKey, _bookmarksToSave().toList());
+    await prefs.setInt(_countKey, count);
+    await prefs.setStringList(_iterableKey, _bookmarksToSave().toList());
     notifyListeners();
-    changeEdited(false);
   }
 
   Iterable<String> _bookmarksToSave() sync* {
