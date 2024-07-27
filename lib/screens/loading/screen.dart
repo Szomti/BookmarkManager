@@ -42,12 +42,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> _handleLoading() async {
-    BookmarksStorage.instance.load();
+    await BookmarksStorage.instance.load();
     await Future.delayed(const Duration(milliseconds: 250));
     if (!mounted) return;
-    Navigator.pushReplacement(
+    unawaited(Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
-    );
+    ));
   }
 }
