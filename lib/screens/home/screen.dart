@@ -8,144 +8,42 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _searchController = TextEditingController();
+  static const _animationDuration = Duration(milliseconds: 300);
+  static const _mainColor = Color(0xFF535353);
+  static const _padding = EdgeInsets.symmetric(
+    vertical: 8.0,
+    horizontal: 16.0,
+  );
 
-  BookmarksStorage get _storage => BookmarksStorage.instance;
-
-  Iterable<Bookmark> get _bookmarks => _storage.searchItems;
+  final HomeScreenViewModel _viewModel = HomeScreenViewModel();
 
   @override
   void initState() {
-    _searchController.addListener(_handleSearchUpdate);
+    _viewModel.init();
     super.initState();
   }
 
   @override
   void dispose() {
-    _searchController.removeListener(_handleSearchUpdate);
+    _viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF454545),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: ListenableBuilder(
-                listenable: _storage,
-                builder: (BuildContext context, Widget? child) {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _bookmarks.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index < _bookmarks.length) {
-                        return _TileWidget(_bookmarks.elementAt(index));
-                      }
-                      return const SizedBox(height: 16);
-                    },
-                  );
-                },
-              ),
-            ),
+            const Expanded(child: _ListViewWidget()),
             Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 16.0,
-              ),
-              color: const Color(0xFF535353),
+              padding: _padding,
+              color: _mainColor,
               child: Column(
                 children: [
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: ValueListenableBuilder(
-                      valueListenable: BookmarksStorage.edited,
-                      builder: (BuildContext context, value, Widget? child) {
-                        return AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: value
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: CustomOutlinedButton(
-                                        text: 'Discard',
-                                        onPressed: (ValueNotifier<bool>
-                                            loading) async {
-                                          loading.value = true;
-                                          await BookmarksStorage.instance
-                                              .load();
-                                          await Future.delayed(const Duration(
-                                              milliseconds: 250));
-                                          loading.value = false;
-                                          BookmarksStorage.changeEdited(false);
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: CustomOutlinedButton(
-                                        text: 'Save',
-                                        onPressed: (ValueNotifier<bool>
-                                            loading) async {
-                                          loading.value = true;
-                                          await BookmarksStorage.instance
-                                              .save();
-                                          await Future.delayed(const Duration(
-                                              milliseconds: 250));
-                                          loading.value = false;
-                                          BookmarksStorage.changeEdited(false);
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : const SizedBox.shrink(),
-                        );
-                      },
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const NewBookmarkScreen(),
-                              ),
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                              color: Color(0xFFD8D8D8),
-                              width: 2.0,
-                            ),
-                          ),
-                          child: Text(
-                            'Add New'.toUpperCase(),
-                            style: const TextStyle(
-                              color: Color(0xFFD8D8D8),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8.0),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextField(
-                          'Search',
-                          _searchController,
-                        ),
-                      ),
-                    ],
-                  ),
+                  _createSwitchingUpdateBar(),
+                  _BottomBarWidget(_viewModel),
                 ],
               ),
             ),
@@ -155,7 +53,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _handleSearchUpdate() {
-    _storage.search = _searchController.text;
+  Widget _createSwitchingUpdateBar() {
+    return ValueListenableBuilder(
+      valueListenable: BookmarksStorage.edited,
+      builder: (BuildContext context, value, Widget? child) {
+        return AnimatedSwitcher(
+          duration: _animationDuration,
+          child: value ? _UpdateBarWidget(_viewModel) : const SizedBox.shrink(),
+        );
+      },
+    );
   }
 }

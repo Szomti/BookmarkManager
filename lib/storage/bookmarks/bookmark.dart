@@ -1,6 +1,7 @@
 import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
 import 'package:flutter/material.dart';
 
+// TODO: Clean up
 class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   static const _idKey = 'id';
   static const _titleKey = 'text';

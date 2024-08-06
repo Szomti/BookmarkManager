@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// TODO: Clean up
 class CustomOutlinedButton extends StatefulWidget {
   final String text;
   final Future<void> Function(ValueNotifier<bool> loading) onPressed;

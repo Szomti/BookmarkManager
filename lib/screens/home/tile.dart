@@ -1,5 +1,6 @@
 part of 'library.dart';
 
+// TODO: Clean up
 class _TileWidget extends StatefulWidget {
   final Bookmark bookmark;
 

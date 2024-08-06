@@ -8,46 +8,44 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  static const _loadingIndicatorSize = 64.0;
+
+  final viewModel = LoadingScreenViewModel();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _handleLoading();
+      await viewModel.handleLoading(context);
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFF454545),
+    return Scaffold(
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox.square(
-                  dimension: 64,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
+            _createLoading(),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _handleLoading() async {
-    await BookmarksStorage.instance.load();
-    await Future.delayed(const Duration(milliseconds: 250));
-    if (!mounted) return;
-    unawaited(Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
-    ));
+  Widget _createLoading() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox.square(
+          dimension: _loadingIndicatorSize,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
   }
 }

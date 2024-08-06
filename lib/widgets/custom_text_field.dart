@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
+// TODO: Clean up
 class CustomTextField extends StatelessWidget {
   final String text;
   final TextEditingController controller;
