@@ -12,8 +12,15 @@ class _TileWidget extends StatefulWidget {
 
 class _TileWidgetState extends State<_TileWidget> {
   final _subChapterController = TextEditingController();
+  final BoolValueNotifier _confirmed = BoolValueNotifier(false);
 
   Bookmark get _bookmark => widget.bookmark;
+
+  @override
+  void dispose() {
+    _confirmed.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,10 +135,17 @@ class _TileWidgetState extends State<_TileWidget> {
                         );
                       },
                     ),
-                    _createEditBaseBtn(
-                      'Delete',
-                      Icons.delete_forever,
-                      () => BookmarksStorage.instance.removeBookmark(_bookmark),
+                    ListenableBuilder(
+                      listenable: _confirmed,
+                      builder: (_, __) {
+                        return _createEditBaseBtn(
+                          'Delete',
+                          Icons.delete_forever,
+                          _handleDelete,
+                          foregroundColor:
+                              _confirmed.value ? const Color(0xFFFF6161) : null,
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -141,6 +155,14 @@ class _TileWidgetState extends State<_TileWidget> {
         },
       ),
     );
+  }
+
+  Future<void> _handleDelete() async {
+    if (_confirmed.value) {
+      return BookmarksStorage.instance.removeBookmark(_bookmark);
+    }
+    _confirmed.setTrue();
+    Timer(const Duration(seconds: 2), _confirmed.setFalse);
   }
 
   Widget _createDialogBtn(String text, void Function() onPressed) {
@@ -177,8 +199,9 @@ class _TileWidgetState extends State<_TileWidget> {
   Widget _createEditBaseBtn(
     String text,
     IconData icon,
-    void Function() onTap,
-  ) {
+    void Function() onTap, {
+    Color? foregroundColor,
+  }) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -193,15 +216,15 @@ class _TileWidgetState extends State<_TileWidget> {
           children: [
             Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Color(0xFFD8D8D8),
+                color: foregroundColor ?? const Color(0xFFD8D8D8),
               ),
             ),
             const SizedBox(width: 4),
             Icon(
               icon,
-              color: const Color(0xFFD8D8D8),
+              color: foregroundColor ?? const Color(0xFFD8D8D8),
               size: 18,
             ),
           ],

@@ -37,6 +37,28 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
             onPressed: (loading) => _viewModel.handleAddNew(loading, context),
           ),
         ),
+        const SizedBox(width: 8.0),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () async {
+            unawaited(
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const SettingsScreen(),
+                ),
+              ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(4.0),
+            child: const Icon(
+              Icons.settings,
+              size: 28.0,
+              color: Color(0xFFD8D8D8),
+            ),
+          ),
+        ),
       ],
     );
   }

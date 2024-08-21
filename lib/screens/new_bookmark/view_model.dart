@@ -39,7 +39,8 @@ class NewBookmarkScreenViewModel {
       Bookmark(
         customId: bookmark?.id,
         title: title,
-        ordinal: bookmark?.ordinal ?? BookmarksStorage.count + 1,
+        updatedAt: DateTime.timestamp(),
+        createdAt: bookmark?.createdAt ?? DateTime.timestamp(),
         chapter: Chapter(main: chapter, sub: subChapter),
       ),
     );

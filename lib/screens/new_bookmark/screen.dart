@@ -35,10 +35,36 @@ class _NewBookmarkScreenState extends State<NewBookmarkScreen> {
           children: [
             _HeaderWidget(_bookmark == null),
             _FieldsWidget(_viewModel),
+            _createInfo(),
             const Spacer(),
             _ButtonsWidget(_viewModel, _bookmark),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _createInfo() {
+    if (_bookmark == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              'Updated at: ${_bookmark?.updatedAt.toLocal()}',
+              style: const TextStyle(color: Color(0xFF959595)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              'Created at: ${_bookmark?.createdAt.toLocal()}',
+              style: const TextStyle(color: Color(0xFF959595)),
+            ),
+          ),
+        ],
       ),
     );
   }

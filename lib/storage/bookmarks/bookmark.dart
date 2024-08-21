@@ -1,26 +1,28 @@
 import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
 import 'package:flutter/material.dart';
 
-// TODO: Clean up
 class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   static const _idKey = 'id';
   static const _titleKey = 'text';
-  static const _ordinalKey = 'ordinal';
+  static const _updatedAtKey = 'updatedAt';
+  static const _createdAtKey = 'createdAt';
   static const _chapterKey = 'chapter';
 
   final int id;
+  final DateTime createdAt;
+  DateTime _updatedAt;
   String _title;
-  int _ordinal;
   Chapter _chapter;
 
   Bookmark({
     int? customId,
     required String title,
-    required int ordinal,
+    required DateTime updatedAt,
+    required this.createdAt,
     required Chapter chapter,
   })  : id = customId ?? BookmarksStorage.count + 1,
         _title = title,
-        _ordinal = ordinal,
+        _updatedAt = updatedAt,
         _chapter = chapter {
     if (customId == null) BookmarksStorage.count += 1;
   }
@@ -29,7 +31,8 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     return {
       _idKey: id,
       _titleKey: _title,
-      _ordinalKey: _ordinal,
+      _updatedAtKey: _updatedAt.millisecondsSinceEpoch,
+      _createdAtKey: createdAt.millisecondsSinceEpoch,
       _chapterKey: _chapter.toJson(),
     };
   }
@@ -38,7 +41,14 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     return Bookmark(
       customId: jsonObject[_idKey] as int,
       title: jsonObject[_titleKey] as String,
-      ordinal: jsonObject[_ordinalKey] as int,
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        jsonObject[_updatedAtKey] as int,
+        isUtc: true,
+      ),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        jsonObject[_createdAtKey] as int,
+        isUtc: true,
+      ),
       chapter: Chapter.fromJson(
         jsonObject[_chapterKey] as Map<String, Object?>,
       ),
@@ -60,17 +70,13 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     _handleEdit();
   }
 
-  int get ordinal => _ordinal;
-
-  set ordinal(int value) {
-    _ordinal = value;
-    _handleEdit();
-  }
-
   Chapter get chapter => _chapter;
+
+  DateTime get updatedAt => _updatedAt;
 
   set chapter(Chapter value) {
     _chapter = value;
+    _updatedAt = DateTime.timestamp();
     _handleEdit();
   }
 
@@ -81,7 +87,18 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
 
   @override
   int compareTo(Bookmark other) {
-    return ordinal.compareTo(other.ordinal);
+    int result = 0;
+    switch (BookmarksStorage.sortType.value) {
+      case SortType.creationStartWithOld:
+        result = createdAt.compareTo(other.createdAt);
+      case SortType.creationStartWithNew:
+        result = other.createdAt.compareTo(createdAt);
+      case SortType.updateStartWithOld:
+        result = _updatedAt.compareTo(other._updatedAt);
+      case SortType.updateStartWithNew:
+        result = other._updatedAt.compareTo(_updatedAt);
+    }
+    return result == 0 ? id.compareTo(other.id) : result;
   }
 }
 

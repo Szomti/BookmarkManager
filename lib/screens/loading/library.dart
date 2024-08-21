@@ -2,6 +2,7 @@ library;
 
 import 'dart:async';
 
+import 'package:bookmark_manager/models/bool_value_notifier/model.dart';
 import 'package:flutter/material.dart';
 
 import '../../colors.dart';
