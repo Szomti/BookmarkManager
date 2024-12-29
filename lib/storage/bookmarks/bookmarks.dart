@@ -110,6 +110,32 @@ class BookmarksStorage with ChangeNotifier {
     }
   }
 
+  String exported() => json.encode(_items.toList());
+
+  Future<void> import(String jsonData) async {
+    Iterable<Bookmark> copy = List.of(_items);
+    bool inDanger = false;
+    try {
+      List<Object?> decodedJson = json.decode(jsonData) as List<Object?>;
+      Iterable<Map<String, Object?>> jsonArray =
+          decodedJson.map((item) => item as Map<String, Object?>);
+      final slowDown = jsonArray.length >= _hugeAmountOfItemsThreshold;
+      clear();
+      inDanger = true;
+      for (final jsonObject in jsonArray) {
+        _items.add(Bookmark.fromJson(jsonObject));
+        if (slowDown) await Future.delayed(const Duration(milliseconds: 2));
+      }
+      await save();
+    } catch (error, stackTrace) {
+      debugPrint('[ERROR] $error\n$stackTrace');
+      if (!inDanger) return;
+      clear();
+      _items.addAll(copy);
+    }
+    notifyListeners();
+  }
+
   static void changeEdited(bool newValue) {
     if (edited.value == newValue) return;
     edited.value = newValue;

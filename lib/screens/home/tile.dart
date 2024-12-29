@@ -4,7 +4,10 @@ part of 'library.dart';
 class _TileWidget extends StatefulWidget {
   final Bookmark bookmark;
 
-  const _TileWidget(this.bookmark);
+  const _TileWidget(
+    this.bookmark, {
+    required Key key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _TileWidgetState();
@@ -31,7 +34,6 @@ class _TileWidgetState extends State<_TileWidget> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListenableBuilder(
-        key: UniqueKey(),
         listenable: _bookmark,
         builder: (BuildContext context, Widget? child) {
           return Padding(

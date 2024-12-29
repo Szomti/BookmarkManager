@@ -24,7 +24,10 @@ class _ListViewWidgetState extends State<_ListViewWidget> {
           itemCount: _bookmarks.length + 1,
           itemBuilder: (context, index) {
             if (index >= _bookmarks.length) return _gapWidget;
-            return _TileWidget(_bookmarks.elementAt(index));
+            return _TileWidget(
+              key: UniqueKey(),
+              _bookmarks.elementAt(index),
+            );
           },
         );
       },

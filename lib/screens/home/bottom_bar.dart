@@ -70,6 +70,7 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
           child: CustomTextField(
             'Search',
             _searchController,
+            showClearBtn: true,
           ),
         ),
       ],

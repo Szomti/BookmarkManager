@@ -8,6 +8,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final BoolValueNotifier _isLoadingNotifier = BoolValueNotifier(false);
+  final DateFormat _formatter = DateFormat('yyyy-MM-dd-HH-mm-ss-SSS');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,13 +20,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _createSortBySection(),
-            _createPureDownloadBtn(),
-            _createJsonAsTxtDownloadBtn(),
-            _createJsonDownloadBtn(),
+            _createLoaderColumn([
+              // _createCustomDownloadBtn(),
+              _createExportBtn(),
+              _createImportBtn(),
+            ]),
             const Spacer(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _createLoaderColumn(Iterable<Widget> widgets) {
+    return ValueListenableBuilder(
+      valueListenable: _isLoadingNotifier,
+      builder: (context, isLoading, widget) {
+        if (!isLoading) return Column(children: widgets.toList());
+        return const Padding(
+          padding: EdgeInsets.only(top: 16.0),
+          child: CircularProgressIndicator(
+            color: Color(0xFFD8D8D8),
+          ),
+        );
+      },
     );
   }
 
@@ -99,26 +119,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _createPureDownloadBtn() {
+  Widget _createCustomDownloadBtn() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
         children: [
           Expanded(
             child: CustomOutlinedButton(
-              text: 'Download text file (.txt)',
+              text: 'Custom Download',
               onPressed: (_) async {
                 var status = await Permission.storage.status;
                 if (!status.isGranted) await Permission.storage.request();
                 Directory tempDir = Directory('/storage/emulated/0/Download/');
                 String tempPath = tempDir.path;
-                final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
                 final DateTime now = DateTime.now();
-                var filePath = '$tempPath/bookmarks_${formatter.format(now)}.txt';
+                var filePath =
+                    '$tempPath/bookmarks_${_formatter.format(now)}.txt';
                 String data = '';
                 for (final item in BookmarksStorage.instance.items) {
                   final title = 'Title: ${item.title}';
-                  final chapter = 'Chapter: ${item.chapter.main}${item.chapter.sub}';
+                  final chapter =
+                      'Chapter: ${item.chapter.main}${item.chapter.sub}';
                   data += '$title, $chapter\n';
                 }
                 await File(filePath).writeAsString(data);
@@ -130,23 +151,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _createJsonAsTxtDownloadBtn() {
+  Widget _createExportBtn() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
         children: [
           Expanded(
             child: CustomOutlinedButton(
-              text: 'Download json file (.txt)',
+              text: 'Export',
               onPressed: (_) async {
-                var status = await Permission.storage.status;
-                if (!status.isGranted) await Permission.storage.request();
-                Directory tempDir = Directory('/storage/emulated/0/Download/');
-                String tempPath = tempDir.path;
-                final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
-                final DateTime now = DateTime.now();
-                var filePath = '$tempPath/bookmarks_${formatter.format(now)}.txt';
-                await File(filePath).writeAsString('\n${BookmarksStorage.instance.bookmarksToSave().toList()}\n');
+                try {
+                  _isLoadingNotifier.setTrue();
+                  var status = await Permission.storage.status;
+                  if (!status.isGranted) await Permission.storage.request();
+                  Directory tempDir =
+                      Directory('/storage/emulated/0/Download/');
+                  String tempPath = tempDir.path;
+                  final DateTime now = DateTime.now();
+                  var filePath =
+                      '$tempPath/bookmarks_${_formatter.format(now)}.json';
+                  await File(filePath)
+                      .writeAsString(BookmarksStorage.instance.exported());
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Success'),
+                    backgroundColor: Colors.green,
+                    duration: Duration(milliseconds: 750),
+                  ));
+                } catch (error, stackTrace) {
+                  debugPrint('[ERROR] $error\n$stackTrace');
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Error occurred'),
+                    backgroundColor: Colors.red,
+                    duration: Duration(milliseconds: 750),
+                  ));
+                } finally {
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  _isLoadingNotifier.setFalse();
+                }
               },
             ),
           ),
@@ -155,28 +198,114 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _createJsonDownloadBtn() {
+  Widget _createImportBtn() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
         children: [
           Expanded(
             child: CustomOutlinedButton(
-              text: 'Download json file (.json)',
+              text: 'Import',
               onPressed: (_) async {
-                var status = await Permission.storage.status;
-                if (!status.isGranted) await Permission.storage.request();
-                Directory tempDir = Directory('/storage/emulated/0/Download/');
-                String tempPath = tempDir.path;
-                final DateFormat formatter = DateFormat('yyyy-MM-dd-HH-mm-ss');
-                final DateTime now = DateTime.now();
-                var filePath = '$tempPath/bookmarks_${formatter.format(now)}.json';
-                await File(filePath).writeAsString('\n${BookmarksStorage.instance.bookmarksToSave().toList()}\n');
+                _isLoadingNotifier.setTrue();
+                await showDialog(
+                  context: context,
+                  builder: (context) => _createDialog(context),
+                );
+                await Future.delayed(const Duration(milliseconds: 350));
+                _isLoadingNotifier.setFalse();
               },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _createDialog(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+                color: const Color(0xFF454545),
+                borderRadius: BorderRadius.circular(8.0)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Imported data will override local one. Are you sure?',
+                    style: TextStyle(
+                      color: Color(0xFFD8D8D8),
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _createDialogBtn('Cancel', () {
+                        if (context.mounted) Navigator.pop(context);
+                      }),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: _createDialogBtn('Confirm', () async {
+                        try {
+                          FilePickerResult? result =
+                          await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['json', 'txt'],
+                          );
+                          String path = result?.files.single.path ?? '';
+                          if (path.isEmpty) return;
+                          File file = File(path);
+                          String jsonData = await file.readAsString();
+                          await BookmarksStorage.instance.import(jsonData);
+                        } catch (error, stackTrace) {
+                          debugPrint('[ERROR] $error\n$stackTrace');
+                        }
+                        if (context.mounted) Navigator.pop(context);
+                      }),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _createDialogBtn(String text, void Function() onPressed) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: onPressed,
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(
+                color: Color(0xFFD8D8D8),
+                width: 2.0,
+              ),
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                text,
+                style: const TextStyle(color: Color(0xFFD8D8D8)),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -6,6 +6,7 @@ class CustomTextField extends StatelessWidget {
   final String text;
   final TextEditingController controller;
   final TextInputType? type;
+  final bool showClearBtn;
   final Iterable<TextInputFormatter> formatters;
 
   const CustomTextField(
@@ -13,6 +14,7 @@ class CustomTextField extends StatelessWidget {
     this.controller, {
     this.type,
     this.formatters = const Iterable.empty(),
+    this.showClearBtn = false,
     super.key,
   });
 
@@ -21,6 +23,7 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       keyboardType: type,
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       inputFormatters: formatters.toList(),
       style: const TextStyle(
         color: Color(0xFFD8D8D8),
@@ -30,6 +33,13 @@ class CustomTextField extends StatelessWidget {
       cursorColor: const Color(0xFFD8D8D8),
       decoration: InputDecoration(
         labelText: text,
+        suffixIcon: showClearBtn
+            ? IconButton(
+                onPressed: controller.clear,
+                icon: const Icon(Icons.clear),
+              )
+            : null,
+        suffixIconColor: showClearBtn ? const Color(0xFFD8D8D8) : null,
         labelStyle: const TextStyle(
           color: Color(0xFF9F9F9F),
         ),
