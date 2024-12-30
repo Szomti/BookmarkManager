@@ -2,6 +2,7 @@ library;
 
 import 'package:bookmark_manager/storage/bookmarks/bookmark.dart';
 import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
+import 'package:bookmark_manager/storage/bookmarks/tags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

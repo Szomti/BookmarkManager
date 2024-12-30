@@ -116,7 +116,7 @@ class BookmarksStorage with ChangeNotifier {
     Iterable<Bookmark> copy = List.of(_items);
     bool inDanger = false;
     try {
-      List<Object?> decodedJson = json.decode(jsonData) as List<Object?>;
+      Iterable<Object?> decodedJson = json.decode(jsonData) as Iterable<Object?>;
       Iterable<Map<String, Object?>> jsonArray =
           decodedJson.map((item) => item as Map<String, Object?>);
       final slowDown = jsonArray.length >= _hugeAmountOfItemsThreshold;

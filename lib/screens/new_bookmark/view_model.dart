@@ -37,8 +37,9 @@ class NewBookmarkScreenViewModel {
     loading.value = true;
     await BookmarksStorage.instance.addBookmark(
       Bookmark(
-        customId: bookmark?.id,
+        uuid: bookmark?.uuid,
         title: title,
+        tags: Tags([]),
         updatedAt: DateTime.timestamp(),
         createdAt: bookmark?.createdAt ?? DateTime.timestamp(),
         chapter: Chapter(main: chapter, sub: subChapter),

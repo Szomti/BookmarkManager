@@ -1,46 +1,56 @@
 import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
+import 'package:bookmark_manager/storage/bookmarks/tag.dart';
+import 'package:bookmark_manager/storage/bookmarks/tags.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
-  static const _idKey = 'id';
+  static const _uuidKey = 'uuid';
   static const _titleKey = 'text';
+  static const _tagsKey = 'tags';
   static const _updatedAtKey = 'updatedAt';
   static const _createdAtKey = 'createdAt';
   static const _chapterKey = 'chapter';
 
-  final int id;
+  final String uuid;
   final DateTime createdAt;
+  final Tags _tags;
   DateTime _updatedAt;
   String _title;
   Chapter _chapter;
 
   Bookmark({
-    int? customId,
+    String? uuid,
     required String title,
+    required Tags tags,
     required DateTime updatedAt,
     required this.createdAt,
     required Chapter chapter,
-  })  : id = customId ?? BookmarksStorage.count + 1,
+  })  : uuid = uuid ?? const Uuid().v4(),
+        _tags = tags,
         _title = title,
         _updatedAt = updatedAt,
-        _chapter = chapter {
-    if (customId == null) BookmarksStorage.count += 1;
-  }
+        _chapter = chapter;
 
   Map<String, Object?> toJson() {
     return {
-      _idKey: id,
+      _uuidKey: uuid,
       _titleKey: _title,
+      _tagsKey: _tags.toJson(),
       _updatedAtKey: _updatedAt.millisecondsSinceEpoch,
       _createdAtKey: createdAt.millisecondsSinceEpoch,
       _chapterKey: _chapter.toJson(),
     };
   }
 
-  static Bookmark fromJson(Map<String, Object?> jsonObject) {
+  factory Bookmark.fromJson(Map<String, Object?> jsonObject) {
+    Iterable<Object?> tagsList = jsonObject[_tagsKey] as Iterable<Object?>;
+    Iterable<Map<String, Object?>> jsonArray =
+        tagsList.map((item) => item as Map<String, Object?>);
     return Bookmark(
-      customId: jsonObject[_idKey] as int,
+      uuid: jsonObject[_uuidKey] as String,
       title: jsonObject[_titleKey] as String,
+      tags: Tags.fromJson(jsonArray),
       updatedAt: DateTime.fromMillisecondsSinceEpoch(
         jsonObject[_updatedAtKey] as int,
         isUtc: true,
@@ -56,12 +66,14 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => uuid.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Bookmark && runtimeType == other.runtimeType && id == other.id;
+      other is Bookmark &&
+          runtimeType == other.runtimeType &&
+          uuid == other.uuid;
 
   String get title => _title;
 
@@ -80,6 +92,16 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     _handleEdit();
   }
 
+  void addTag(Tag tag) {
+    _tags.addTag(tag);
+    _handleEdit();
+  }
+
+  void removeTag(Tag tag) {
+    _tags.removeTag(tag);
+    _handleEdit();
+  }
+
   void _handleEdit() {
     notifyListeners();
     BookmarksStorage.changeEdited(true);
@@ -94,11 +116,11 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
       case SortType.creationStartWithNew:
         result = other.createdAt.compareTo(createdAt);
       case SortType.updateStartWithOld:
-        result = _updatedAt.compareTo(other._updatedAt);
+        result = updatedAt.compareTo(other.updatedAt);
       case SortType.updateStartWithNew:
-        result = other._updatedAt.compareTo(_updatedAt);
+        result = other.updatedAt.compareTo(updatedAt);
     }
-    return result == 0 ? id.compareTo(other.id) : result;
+    return result == 0 ? uuid.compareTo(other.uuid) : result;
   }
 }
 
