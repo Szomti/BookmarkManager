@@ -1,7 +1,7 @@
 part of 'library.dart';
 
 class _UpdateBarWidget extends StatefulWidget {
-  final HomeScreenViewModel viewModel;
+  final BookmarksScreenViewModel viewModel;
 
   const _UpdateBarWidget(this.viewModel);
 
@@ -12,7 +12,7 @@ class _UpdateBarWidget extends StatefulWidget {
 class _UpdateBarWidgetState extends State<_UpdateBarWidget> {
   static const _gapWidget = SizedBox(width: 16);
 
-  HomeScreenViewModel get _viewModel => widget.viewModel;
+  BookmarksScreenViewModel get _viewModel => widget.viewModel;
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,13 @@
 part of './library.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class BookmarksScreen extends StatefulWidget {
+  const BookmarksScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _HomeScreenState();
+  State<StatefulWidget> createState() => _BookmarksScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _BookmarksScreenState extends State<BookmarksScreen> {
   static const _animationDuration = Duration(milliseconds: 300);
   static const _mainColor = Color(0xFF535353);
   static const _padding = EdgeInsets.symmetric(
@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
     horizontal: 16.0,
   );
 
-  final HomeScreenViewModel _viewModel = HomeScreenViewModel();
+  final BookmarksScreenViewModel _viewModel = BookmarksScreenViewModel();
 
   @override
   void initState() {
@@ -44,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   _createSwitchingUpdateBar(),
                   _BottomBarWidget(_viewModel),
+                  const MainNavigationBar(),
                 ],
               ),
             ),

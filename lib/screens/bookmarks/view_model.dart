@@ -1,6 +1,6 @@
 part of 'library.dart';
 
-class HomeScreenViewModel {
+class BookmarksScreenViewModel {
   static const _delayDuration = Duration(milliseconds: 250);
 
   final searchController = TextEditingController();
@@ -39,15 +39,23 @@ class HomeScreenViewModel {
     BookmarksStorage.changeEdited(false);
   }
 
-  Future<void> handleAddNew(
-    ValueNotifier<bool> loading,
-    BuildContext context,
-  ) async {
+  Future<void> handleAddNew(BuildContext context) async {
     unawaited(
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => const NewBookmarkScreen(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> handleFilter(BuildContext context) async {
+    unawaited(
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const FilterBookmarks(),
         ),
       ),
     );

@@ -22,12 +22,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _createSortBySection(),
             _createLoaderColumn([
               // _createCustomDownloadBtn(),
+              _createHeader('Bookmarks'),
               _createExportBtn(),
               _createImportBtn(),
             ]),
             const Spacer(),
+            const MainNavigationBar(useMargin: true),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _createHeader(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: Color(0xFFD8D8D8),
+        fontSize: 20.0,
       ),
     );
   }
@@ -60,13 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Expanded(
             child: Column(
               children: [
-                const Text(
-                  'Sort by:',
-                  style: TextStyle(
-                    color: Color(0xFFD8D8D8),
-                    fontSize: 20.0,
-                  ),
-                ),
+                _createHeader('Sort by:'),
                 for (final type in SortType.values) _createSortByTile(type),
               ],
             ),
@@ -153,7 +159,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _createExportBtn() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       child: Row(
         children: [
           Expanded(
@@ -200,7 +206,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _createImportBtn() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       child: Row(
         children: [
           Expanded(
@@ -259,7 +265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: _createDialogBtn('Confirm', () async {
                         try {
                           FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
+                              await FilePicker.platform.pickFiles(
                             type: FileType.custom,
                             allowedExtensions: ['json', 'txt'],
                           );

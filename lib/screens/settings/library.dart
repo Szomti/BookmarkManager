@@ -11,5 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../colors.dart';
+import '../../widgets/navigation_bar.dart';
 
 part './screen.dart';

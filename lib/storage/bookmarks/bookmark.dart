@@ -1,8 +1,9 @@
 import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
-import 'package:bookmark_manager/storage/bookmarks/tag.dart';
-import 'package:bookmark_manager/storage/bookmarks/tags.dart';
+import 'package:bookmark_manager/storage/tags/tags_list.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
+import '../tags/tag.dart';
 
 class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   static const _uuidKey = 'uuid';
@@ -14,7 +15,7 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
 
   final String uuid;
   final DateTime createdAt;
-  final Tags _tags;
+  final TagsList _tags;
   DateTime _updatedAt;
   String _title;
   Chapter _chapter;
@@ -22,7 +23,7 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   Bookmark({
     String? uuid,
     required String title,
-    required Tags tags,
+    required TagsList tags,
     required DateTime updatedAt,
     required this.createdAt,
     required Chapter chapter,
@@ -50,7 +51,7 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     return Bookmark(
       uuid: jsonObject[_uuidKey] as String,
       title: jsonObject[_titleKey] as String,
-      tags: Tags.fromJson(jsonArray),
+      tags: TagsList.fromJson(jsonArray),
       updatedAt: DateTime.fromMillisecondsSinceEpoch(
         jsonObject[_updatedAtKey] as int,
         isUtc: true,

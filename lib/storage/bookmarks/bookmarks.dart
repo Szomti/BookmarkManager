@@ -21,10 +21,8 @@ class BookmarksStorage with ChangeNotifier {
   static const _hugeAmountOfItemsThreshold = 50;
   static const _iterableKey = 'BOOKMARKS_ITERABLE';
   static const _countKey = 'BOOKMARKS_COUNT';
-  static const _defaultCount = 0;
   static final instance = BookmarksStorage._();
   static final SplayTreeSet<Bookmark> _items = SplayTreeSet<Bookmark>();
-  static int count = _defaultCount;
   static ValueNotifier<bool> edited = ValueNotifier(false);
   static ValueNotifier<SortType> sortType =
       ValueNotifier(SortType.updateStartWithOld);
@@ -55,7 +53,7 @@ class BookmarksStorage with ChangeNotifier {
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    count = prefs.getInt(_countKey) ?? _defaultCount;
+    await prefs.remove(_countKey);
     final iterable = prefs.getStringList(_iterableKey) ?? [];
     final slowDown = iterable.length >= _hugeAmountOfItemsThreshold;
     clear();
@@ -85,7 +83,6 @@ class BookmarksStorage with ChangeNotifier {
 
   Future<void> save() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_countKey, count);
     await prefs.setStringList(_iterableKey, bookmarksToSave().toList());
     _resort();
     notifyListeners();

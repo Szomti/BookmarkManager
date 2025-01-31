@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 // TODO: Clean up
 class CustomOutlinedButton extends StatefulWidget {
   final String text;
+  final Widget? icon;
   final Future<void> Function(ValueNotifier<bool> loading) onPressed;
 
   const CustomOutlinedButton({
     super.key,
     required this.text,
+    this.icon,
     required this.onPressed,
   });
 
@@ -20,7 +22,10 @@ class _CustomOutlinedButtonState extends State<CustomOutlinedButton> {
 
   String get _text => widget.text;
 
-  Future<void> Function(ValueNotifier<bool> loading) get _onPressed => widget.onPressed;
+  Widget? get _icon => widget.icon;
+
+  Future<void> Function(ValueNotifier<bool> loading) get _onPressed =>
+      widget.onPressed;
 
   @override
   void dispose() {
@@ -36,6 +41,9 @@ class _CustomOutlinedButtonState extends State<CustomOutlinedButton> {
         return OutlinedButton(
           onPressed: loading ? null : () => _onPressed(_loading),
           style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
             side: const BorderSide(
               color: Color(0xFFD8D8D8),
               width: 2.0,
@@ -45,15 +53,20 @@ class _CustomOutlinedButtonState extends State<CustomOutlinedButton> {
             fit: BoxFit.scaleDown,
             child: loading
                 ? const SizedBox.square(
-                  dimension: 22,
-                  child: CircularProgressIndicator(
+                    dimension: 22,
+                    child: CircularProgressIndicator(
                       color: Color(0xFFD8D8D8),
-                    strokeWidth: 2,
+                      strokeWidth: 2,
                     ),
-                )
-                : Text(
-                    _text,
-                    style: const TextStyle(color: Color(0xFFD8D8D8)),
+                  )
+                : Row(
+                    children: [
+                      Text(
+                        _text,
+                        style: const TextStyle(color: Color(0xFFD8D8D8)),
+                      ),
+                      _icon ?? const SizedBox.shrink(),
+                    ],
                   ),
           ),
         );

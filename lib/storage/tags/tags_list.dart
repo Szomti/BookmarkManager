@@ -1,14 +1,14 @@
 import 'dart:collection';
 
-import 'package:bookmark_manager/storage/bookmarks/tag.dart';
+import 'package:bookmark_manager/storage/tags/tag.dart';
 
-class Tags extends Iterable<Tag> {
+class TagsList extends Iterable<Tag> {
   final SplayTreeSet<Tag> tags;
 
-  Tags(Iterable<Tag> tags) : tags = SplayTreeSet.of(tags);
+  TagsList(Iterable<Tag> tags) : tags = SplayTreeSet.of(tags);
 
-  factory Tags.fromJson(Iterable<Map<String, Object?>> jsonArray) {
-    return Tags([
+  factory TagsList.fromJson(Iterable<Map<String, Object?>> jsonArray) {
+    return TagsList([
       for (Map<String, Object?> jsonObject in jsonArray)
         Tag.fromJson(jsonObject),
     ]);

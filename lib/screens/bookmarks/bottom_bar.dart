@@ -1,7 +1,7 @@
 part of 'library.dart';
 
 class _BottomBarWidget extends StatefulWidget {
-  final HomeScreenViewModel viewModel;
+  final BookmarksScreenViewModel viewModel;
 
   const _BottomBarWidget(this.viewModel);
 
@@ -12,7 +12,7 @@ class _BottomBarWidget extends StatefulWidget {
 class _BottomBarWidgetState extends State<_BottomBarWidget> {
   static const _gapWidget = SizedBox(height: 8);
 
-  HomeScreenViewModel get _viewModel => widget.viewModel;
+  BookmarksScreenViewModel get _viewModel => widget.viewModel;
 
   TextEditingController get _searchController => _viewModel.searchController;
 
@@ -34,29 +34,30 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
         Expanded(
           child: CustomOutlinedButton(
             text: 'Add New',
-            onPressed: (loading) => _viewModel.handleAddNew(loading, context),
+            icon: const Padding(
+              padding: EdgeInsets.only(left: 4.0),
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            onPressed: (loading) => _viewModel.handleAddNew(context),
           ),
         ),
         const SizedBox(width: 8.0),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () async {
-            unawaited(
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const SettingsScreen(),
-                ),
+        Expanded(
+          child: CustomOutlinedButton(
+            text: 'Filter',
+            icon: const Padding(
+              padding: EdgeInsets.only(left: 4.0),
+              child: Icon(
+                Icons.filter_list,
+                color: Colors.white,
+                size: 24,
               ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.all(4.0),
-            child: const Icon(
-              Icons.settings,
-              size: 28.0,
-              color: Color(0xFFD8D8D8),
             ),
+            onPressed: (loading) => _viewModel.handleFilter(context),
           ),
         ),
       ],
