@@ -21,11 +21,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             _createSortBySection(),
             _createLoaderColumn([
-              // _createCustomDownloadBtn(),
               _createHeader('Bookmarks'),
+              // _createCustomDownloadBtn(),
               _createExportBtn(),
               _createImportBtn(),
             ]),
+            const SizedBox(height: 16.0),
+            _createHeader('Other'),
+            _createSwitch(
+              "Text Tags",
+              SettingsStorage.instance.textTags,
+              SettingsStorage.instance.setTextTags,
+            ),
             const Spacer(),
             const MainNavigationBar(useMargin: true),
           ],
@@ -122,6 +129,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _createSwitch(String text, bool value, void Function(bool) onChanged) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          text,
+          style: const TextStyle(
+            color: Color(0xFFD8D8D8),
+            fontSize: 16.0,
+          ),
+        ),
+        const SizedBox(width: 16.0),
+        GestureDetector(
+          onTap: () {
+            onChanged(!value);
+            setState(() {});
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFF656565),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              value ? 'ON' : 'OFF',
+              style: const TextStyle(
+                color: Color(0xFFD8D8D8),
+                fontSize: 16.0,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

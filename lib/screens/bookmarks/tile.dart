@@ -14,6 +14,7 @@ class _TileWidget extends StatefulWidget {
 }
 
 class _TileWidgetState extends State<_TileWidget> {
+  final TagsStorage tagsStorage = TagsStorage.instance;
   final _subChapterController = TextEditingController();
   final BoolValueNotifier _confirmed = BoolValueNotifier(false);
   final BoolValueNotifier _expanded = BoolValueNotifier(false);
@@ -107,8 +108,14 @@ class _TileWidgetState extends State<_TileWidget> {
   }
 
   Widget _createEditSection() {
-    return Row(
+    return Wrap(
       children: [
+        for (final tag in _bookmark.tags)
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: CustomTag(tag),
+          ),
+        const Row(children: [Expanded(child: SizedBox.shrink())]),
         _createEditBaseBtn(
           'Sub Chapter',
           Icons.edit_note,
@@ -166,6 +173,18 @@ class _TileWidgetState extends State<_TileWidget> {
                 builder: (_) => NewBookmarkScreen(
                   bookmark: _bookmark,
                 ),
+              ),
+            );
+          },
+        ),
+        _createEditBaseBtn(
+          'Edit Tags',
+          Icons.tag_outlined,
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BookmarkTagsScreen(_bookmark),
               ),
             );
           },
@@ -236,12 +255,13 @@ class _TileWidgetState extends State<_TileWidget> {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.all(4.0),
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
         decoration: BoxDecoration(
           color: const Color(0xFF7E7E7E),
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               text,

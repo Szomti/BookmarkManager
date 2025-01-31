@@ -45,7 +45,7 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
             onPressed: (loading) => _viewModel.handleAddNew(context),
           ),
         ),
-        const SizedBox(width: 8.0),
+        const SizedBox(width: 16.0),
         Expanded(
           child: CustomOutlinedButton(
             text: 'Filter',

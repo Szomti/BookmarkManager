@@ -41,7 +41,10 @@ class _TileWidgetState extends State<_TileWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomTag(_tag),
+                    CustomTag(
+                      _tag,
+                      forceCustom: true,
+                    ),
                   ],
                 ),
               ),

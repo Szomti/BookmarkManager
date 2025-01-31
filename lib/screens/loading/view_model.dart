@@ -9,8 +9,8 @@ class LoadingScreenViewModel {
 
   Future<void> handleLoading(BuildContext context) async {
     try {
-      await BookmarksStorage.instance.load();
       await TagsStorage.instance.load();
+      await BookmarksStorage.instance.load();
       await Future.delayed(const Duration(milliseconds: 250));
       if (!context.mounted) return;
       unawaited(

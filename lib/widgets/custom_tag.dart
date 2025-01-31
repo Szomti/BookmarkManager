@@ -1,13 +1,24 @@
 import 'package:bookmark_manager/storage/tags/tag.dart';
 import 'package:flutter/material.dart';
 
-class CustomTag extends StatelessWidget {
-  final Tag tag;
+import '../storage/settings/settings.dart';
 
-  const CustomTag(this.tag, {super.key});
+class CustomTag extends StatelessWidget {
+  static final SettingsStorage _settingsStorage = SettingsStorage.instance;
+  final Tag tag;
+  final bool forceCustom;
+
+  const CustomTag(
+    this.tag, {
+    this.forceCustom = false,
+    super.key,
+  });
+
+  bool get textTags => _settingsStorage.textTags;
 
   @override
   Widget build(BuildContext context) {
+    if (textTags && !forceCustom) return _createText();
     return Container(
       decoration: BoxDecoration(
         color: tag.backgroundColor,
@@ -18,13 +29,18 @@ class CustomTag extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Text(
-          tag.label,
-          style: TextStyle(
-            color: tag.labelColor,
-          ),
-        ),
+        padding: const EdgeInsets.all(4.0),
+        child: _createText(),
+      ),
+    );
+  }
+
+  Widget _createText() {
+    return Text(
+      tag.label,
+      style: TextStyle(
+        fontSize: 12,
+        color: tag.labelColor,
       ),
     );
   }

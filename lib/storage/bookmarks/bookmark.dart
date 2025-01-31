@@ -1,21 +1,20 @@
 import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
-import 'package:bookmark_manager/storage/tags/tags_list.dart';
+import 'package:bookmark_manager/storage/tags/tag.dart';
+import 'package:bookmark_manager/storage/tags/tags.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-
-import '../tags/tag.dart';
 
 class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   static const _uuidKey = 'uuid';
   static const _titleKey = 'text';
-  static const _tagsKey = 'tags';
+  static const _tagUuidsKey = 'tags';
   static const _updatedAtKey = 'updatedAt';
   static const _createdAtKey = 'createdAt';
   static const _chapterKey = 'chapter';
 
   final String uuid;
   final DateTime createdAt;
-  final TagsList _tags;
+  final Set<String> _tagUuids;
   DateTime _updatedAt;
   String _title;
   Chapter _chapter;
@@ -23,21 +22,22 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   Bookmark({
     String? uuid,
     required String title,
-    required TagsList tags,
+    required Iterable<String> tags,
     required DateTime updatedAt,
     required this.createdAt,
     required Chapter chapter,
   })  : uuid = uuid ?? const Uuid().v4(),
-        _tags = tags,
+        _tagUuids = Set.of(tags),
         _title = title,
         _updatedAt = updatedAt,
         _chapter = chapter;
 
   Map<String, Object?> toJson() {
+    final tagsUuids = TagsStorage.instance.list.map((tag) => tag.uuid);
     return {
       _uuidKey: uuid,
       _titleKey: _title,
-      _tagsKey: _tags.toJson(),
+      _tagUuidsKey: _tagUuids.where((uuid) => tagsUuids.contains(uuid)),
       _updatedAtKey: _updatedAt.millisecondsSinceEpoch,
       _createdAtKey: createdAt.millisecondsSinceEpoch,
       _chapterKey: _chapter.toJson(),
@@ -45,13 +45,11 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   }
 
   factory Bookmark.fromJson(Map<String, Object?> jsonObject) {
-    Iterable<Object?> tagsList = jsonObject[_tagsKey] as Iterable<Object?>;
-    Iterable<Map<String, Object?>> jsonArray =
-        tagsList.map((item) => item as Map<String, Object?>);
+    Iterable<Object?> tagsList = jsonObject[_tagUuidsKey] as Iterable<Object?>;
     return Bookmark(
       uuid: jsonObject[_uuidKey] as String,
       title: jsonObject[_titleKey] as String,
-      tags: TagsList.fromJson(jsonArray),
+      tags: tagsList.whereType<String>(),
       updatedAt: DateTime.fromMillisecondsSinceEpoch(
         jsonObject[_updatedAtKey] as int,
         isUtc: true,
@@ -93,13 +91,19 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     _handleEdit();
   }
 
-  void addTag(Tag tag) {
-    _tags.addTag(tag);
+  Iterable<String> get tagUuids => _tagUuids.toList();
+
+  Iterable<Tag> get tags => tagUuids
+      .map<Tag?>((tagUuid) => TagsStorage.instance.list.fromUuid(tagUuid))
+      .whereType<Tag>();
+
+  void addTag(String tagUuid) {
+    _tagUuids.add(tagUuid);
     _handleEdit();
   }
 
-  void removeTag(Tag tag) {
-    _tags.removeTag(tag);
+  void removeTag(String tagUuid) {
+    _tagUuids.remove(tagUuid);
     _handleEdit();
   }
 

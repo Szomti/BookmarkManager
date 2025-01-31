@@ -39,7 +39,7 @@ class NewBookmarkScreenViewModel {
       Bookmark(
         uuid: bookmark?.uuid,
         title: title,
-        tags: TagsList([]),
+        tags: [],
         updatedAt: DateTime.timestamp(),
         createdAt: bookmark?.createdAt ?? DateTime.timestamp(),
         chapter: Chapter(main: chapter, sub: subChapter),

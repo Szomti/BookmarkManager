@@ -9,7 +9,6 @@ class FilterBookmarks extends StatefulWidget {
 
 class _FilterBookmarksState extends State<FilterBookmarks> {
   final _storage = TagsStorage.instance;
-  final _checkList = <bool>[true];
 
   TagsList get _tagsList => _storage.list;
 
@@ -20,6 +19,7 @@ class _FilterBookmarksState extends State<FilterBookmarks> {
       body: SafeArea(
         child: Column(
           children: [
+            const _HeaderWidget(),
             Expanded(
               child: ListView.builder(
                 itemCount: _tagsList.length,
@@ -53,16 +53,16 @@ class _FilterBookmarksState extends State<FilterBookmarks> {
   }
 
   Widget _createTile(int index) {
-    bool check = _checkList.elementAt(index);
+    bool check = true; //_checkList.elementAt(index);
     return GestureDetector(
       onTap: () {
-        _checkList[index] = !check;
-        setState(() {});
+        // _checkList[index] = !check;
+        // setState(() {});
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.all(8.0),
-        margin: const EdgeInsets.all(16.0),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
         decoration: BoxDecoration(
           color: check ? const Color(0xFF656565) : const Color(0xFF595959),
           borderRadius: BorderRadius.circular(8),
@@ -71,10 +71,11 @@ class _FilterBookmarksState extends State<FilterBookmarks> {
           children: [
             _createCheckbox(check),
             Expanded(
-                child: Align(
-              alignment: Alignment.centerLeft,
-              child: CustomTag(_tagsList.elementAt(index)),
-            )),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: CustomTag(_tagsList.elementAt(index)),
+              ),
+            ),
           ],
         ),
       ),

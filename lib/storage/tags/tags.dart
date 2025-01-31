@@ -13,14 +13,13 @@ class TagsStorage with ChangeNotifier {
   TagsStorage._();
 
   Future<void> addTag(Tag newTag) async {
-    list.tags.removeWhere((tag) => tag == newTag);
-    list.tags.add(newTag);
+    list.addTag(newTag);
     await save();
     notifyListeners();
   }
 
   Future<void> removeTag(Tag tag) async {
-    list.tags.remove(tag);
+    list.removeTag(tag);
     await save();
     notifyListeners();
   }
@@ -33,8 +32,7 @@ class TagsStorage with ChangeNotifier {
         json.decode(tagsJsonData) as Iterable<Object?>;
     Iterable<Map<String, Object?>> jsonArray =
         decodedJson.map((item) => item as Map<String, Object?>);
-    list.tags.clear();
-    list.tags.addAll([
+    list.recreate([
       for (Map<String, Object?> jsonObject in jsonArray)
         Tag.fromJson(jsonObject),
     ]);

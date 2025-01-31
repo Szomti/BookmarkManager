@@ -55,6 +55,7 @@ class _ExampleTagState extends State<ExampleTag> {
                         backgroundColor: _backgroundColor,
                         borderColor: _borderColor,
                       ),
+                      forceCustom: true,
                     );
                   },
                 ),
