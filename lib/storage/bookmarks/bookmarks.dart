@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../tags/tags.dart';
 import 'bookmark.dart';
 
 enum SortType {
@@ -24,19 +25,27 @@ class BookmarksStorage with ChangeNotifier {
   static final instance = BookmarksStorage._();
   static final SplayTreeSet<Bookmark> _items = SplayTreeSet<Bookmark>();
   static ValueNotifier<bool> edited = ValueNotifier(false);
-  static ValueNotifier<SortType> sortType =
-      ValueNotifier(SortType.updateStartWithOld);
+  static ValueNotifier<SortType> sortType = ValueNotifier(
+    SortType.updateStartWithOld,
+  );
+  final TagsStorage _tagsStorage = TagsStorage.instance;
+  final SharedPreferencesAsync prefs = SharedPreferencesAsync();
   String _search = '';
 
   BookmarksStorage._();
 
+  void handleFilterEdited() => notifyListeners();
+
   Iterable<Bookmark> get items => _items.toList();
 
-  Iterable<Bookmark> get searchItems => items
-      .where(
-        (item) => item.title.toLowerCase().contains(_search.toLowerCase()),
-      )
-      .toList();
+  Iterable<Bookmark> get searchItems =>
+      items
+          .where(
+            (item) =>
+                _tagsStorage.canShow(item) &&
+                item.title.toLowerCase().contains(_search.toLowerCase()),
+          )
+          .toList();
 
   void clear() {
     for (final item in _items) {
@@ -52,15 +61,12 @@ class BookmarksStorage with ChangeNotifier {
   }
 
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_countKey);
-    final iterable = prefs.getStringList(_iterableKey) ?? [];
+    final iterable = await prefs.getStringList(_iterableKey) ?? [];
     final slowDown = iterable.length >= _hugeAmountOfItemsThreshold;
     clear();
     for (final item in iterable) {
-      _items.add(
-        Bookmark.fromJson(json.decode(item) as Map<String, Object?>),
-      );
+      _items.add(Bookmark.fromJson(json.decode(item) as Map<String, Object?>));
       if (slowDown) await Future.delayed(const Duration(milliseconds: 2));
     }
     notifyListeners();
@@ -82,7 +88,6 @@ class BookmarksStorage with ChangeNotifier {
   }
 
   Future<void> save() async {
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(_iterableKey, bookmarksToSave().toList());
     _resort();
     notifyListeners();
@@ -113,9 +118,11 @@ class BookmarksStorage with ChangeNotifier {
     Iterable<Bookmark> copy = List.of(_items);
     bool inDanger = false;
     try {
-      Iterable<Object?> decodedJson = json.decode(jsonData) as Iterable<Object?>;
-      Iterable<Map<String, Object?>> jsonArray =
-          decodedJson.map((item) => item as Map<String, Object?>);
+      Iterable<Object?> decodedJson =
+          json.decode(jsonData) as Iterable<Object?>;
+      Iterable<Map<String, Object?>> jsonArray = decodedJson.map(
+        (item) => item as Map<String, Object?>,
+      );
       final slowDown = jsonArray.length >= _hugeAmountOfItemsThreshold;
       clear();
       inDanger = true;

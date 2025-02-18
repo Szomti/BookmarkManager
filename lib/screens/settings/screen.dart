@@ -168,6 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /* * * * * * * * * * Future Feature * * * * * * * * *
   Widget _createCustomDownloadBtn() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -199,6 +200,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+   * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   Widget _createExportBtn() {
     return Padding(

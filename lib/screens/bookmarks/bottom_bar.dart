@@ -20,11 +20,7 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _createAddNewBtn(),
-        _gapWidget,
-        _createSearch(),
-      ],
+      children: [_createAddNewBtn(), _gapWidget, _createSearch()],
     );
   }
 
@@ -36,11 +32,7 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
             text: 'Add New',
             icon: const Padding(
               padding: EdgeInsets.only(left: 4.0),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: Icon(Icons.add, color: Colors.white, size: 24),
             ),
             onPressed: (loading) => _viewModel.handleAddNew(context),
           ),
@@ -51,13 +43,12 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
             text: 'Filter',
             icon: const Padding(
               padding: EdgeInsets.only(left: 4.0),
-              child: Icon(
-                Icons.filter_list,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: Icon(Icons.filter_list, color: Colors.white, size: 24),
             ),
-            onPressed: (loading) => _viewModel.handleFilter(context),
+            onPressed: (loading) async {
+              await _viewModel.handleFilter(context);
+              _viewModel.handleFilterEdited();
+            },
           ),
         ),
       ],

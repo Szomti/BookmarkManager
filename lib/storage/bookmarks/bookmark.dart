@@ -37,7 +37,7 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     return {
       _uuidKey: uuid,
       _titleKey: _title,
-      _tagUuidsKey: _tagUuids.where((uuid) => tagsUuids.contains(uuid)),
+      _tagUuidsKey: _tagUuids.where((uuid) => tagsUuids.contains(uuid)).toList(),
       _updatedAtKey: _updatedAt.millisecondsSinceEpoch,
       _createdAtKey: createdAt.millisecondsSinceEpoch,
       _chapterKey: _chapter.toJson(),

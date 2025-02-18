@@ -10,7 +10,7 @@ class FilterBookmarks extends StatefulWidget {
 class _FilterBookmarksState extends State<FilterBookmarks> {
   final _storage = TagsStorage.instance;
 
-  TagsList get _tagsList => _storage.list;
+  Iterable<Tag> get _tagsList => _storage.list.tags;
 
   @override
   Widget build(BuildContext context) {
@@ -32,53 +32,51 @@ class _FilterBookmarksState extends State<FilterBookmarks> {
     );
   }
 
-  Widget _createCheckbox(bool check) {
+  Widget _createCheckbox(TagFilterState state) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        child: check
-            ? Icon(
-                key: UniqueKey(),
-                Icons.check_box_rounded,
-                color: Colors.white,
-              )
-            : Icon(
-                key: UniqueKey(),
-                Icons.check_box_outline_blank_rounded,
-                color: Colors.white,
-              ),
+        duration: const Duration(milliseconds: 150),
+        child: Icon(key: UniqueKey(), switch (state) {
+          TagFilterState.show => Icons.check,
+          TagFilterState.none => Icons.horizontal_rule,
+          TagFilterState.exclude => Icons.close,
+        }, color: Colors.white),
       ),
     );
   }
 
   Widget _createTile(int index) {
-    bool check = true; //_checkList.elementAt(index);
-    return GestureDetector(
-      onTap: () {
-        // _checkList[index] = !check;
-        // setState(() {});
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.all(8.0),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
-        decoration: BoxDecoration(
-          color: check ? const Color(0xFF656565) : const Color(0xFF595959),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            _createCheckbox(check),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: CustomTag(_tagsList.elementAt(index)),
-              ),
+    Tag tag = _tagsList.elementAt(index);
+    return ListenableBuilder(
+      listenable: tag,
+      builder: (BuildContext context, Widget? child) {
+        return GestureDetector(
+          onTap: () async {
+            tag.filterState = tag.filterState.next();
+            await _storage.save();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFF656565), //: const Color(0xFF595959),
+              borderRadius: BorderRadius.circular(8),
             ),
-          ],
-        ),
-      ),
+            child: Row(
+              children: [
+                _createCheckbox(tag.filterState),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: CustomTag(_tagsList.elementAt(index)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

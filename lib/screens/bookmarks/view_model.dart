@@ -7,6 +7,7 @@ class BookmarksScreenViewModel {
 
   BookmarksStorage get _storage => BookmarksStorage.instance;
 
+
   void init() {
     searchController.addListener(_handleSearchUpdate);
   }
@@ -15,6 +16,8 @@ class BookmarksScreenViewModel {
     searchController.removeListener(_handleSearchUpdate);
     searchController.dispose();
   }
+
+  void handleFilterEdited() => _storage.handleFilterEdited();
 
   void _handleSearchUpdate() {
     _storage.search = searchController.text;
@@ -40,24 +43,16 @@ class BookmarksScreenViewModel {
   }
 
   Future<void> handleAddNew(BuildContext context) async {
-    unawaited(
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const NewBookmarkScreen(),
-        ),
-      ),
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const NewBookmarkScreen()),
     );
   }
 
   Future<void> handleFilter(BuildContext context) async {
-    unawaited(
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const FilterBookmarks(),
-        ),
-      ),
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const FilterBookmarks()),
     );
   }
 }
