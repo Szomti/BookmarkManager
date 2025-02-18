@@ -20,8 +20,7 @@ enum SortType {
 
 class BookmarksStorage with ChangeNotifier {
   static const _hugeAmountOfItemsThreshold = 50;
-  static const _iterableKey = 'BOOKMARKS_ITERABLE';
-  static const _countKey = 'BOOKMARKS_COUNT';
+  static const iterableKey = 'BOOKMARKS_ITERABLE';
   static final instance = BookmarksStorage._();
   static final SplayTreeSet<Bookmark> _items = SplayTreeSet<Bookmark>();
   static ValueNotifier<bool> edited = ValueNotifier(false);
@@ -61,8 +60,7 @@ class BookmarksStorage with ChangeNotifier {
   }
 
   Future<void> load() async {
-    await prefs.remove(_countKey);
-    final iterable = await prefs.getStringList(_iterableKey) ?? [];
+    final iterable = await prefs.getStringList(iterableKey) ?? [];
     final slowDown = iterable.length >= _hugeAmountOfItemsThreshold;
     clear();
     for (final item in iterable) {
@@ -88,7 +86,7 @@ class BookmarksStorage with ChangeNotifier {
   }
 
   Future<void> save() async {
-    await prefs.setStringList(_iterableKey, bookmarksToSave().toList());
+    await prefs.setStringList(iterableKey, bookmarksToSave().toList());
     _resort();
     notifyListeners();
   }
@@ -112,15 +110,14 @@ class BookmarksStorage with ChangeNotifier {
     }
   }
 
-  String exported() => json.encode(_items.toList());
+  Iterable<Map<String, Object?>> exported() =>
+      [for (final bookmark in _items) bookmark.toJson()].toList();
 
-  Future<void> import(String jsonData) async {
+  Future<void> import(Iterable<Object?> jsonData) async {
     Iterable<Bookmark> copy = List.of(_items);
     bool inDanger = false;
     try {
-      Iterable<Object?> decodedJson =
-          json.decode(jsonData) as Iterable<Object?>;
-      Iterable<Map<String, Object?>> jsonArray = decodedJson.map(
+      Iterable<Map<String, Object?>> jsonArray = jsonData.map(
         (item) => item as Map<String, Object?>,
       );
       final slowDown = jsonArray.length >= _hugeAmountOfItemsThreshold;

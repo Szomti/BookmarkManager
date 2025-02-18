@@ -9,7 +9,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final BoolValueNotifier _isLoadingNotifier = BoolValueNotifier(false);
-  final DateFormat _formatter = DateFormat('yyyy-MM-dd-HH-mm-ss-SSS');
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             _createSortBySection(),
             _createLoaderColumn([
-              _createHeader('Bookmarks'),
+              _createHeader('App Data'),
               // _createCustomDownloadBtn(),
               _createExportBtn(),
               _createImportBtn(),
@@ -44,10 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _createHeader(String text) {
     return Text(
       text,
-      style: const TextStyle(
-        color: Color(0xFFD8D8D8),
-        fontSize: 20.0,
-      ),
+      style: const TextStyle(color: Color(0xFFD8D8D8), fontSize: 20.0),
     );
   }
 
@@ -58,9 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (!isLoading) return Column(children: widgets.toList());
         return const Padding(
           padding: EdgeInsets.only(top: 16.0),
-          child: CircularProgressIndicator(
-            color: Color(0xFFD8D8D8),
-          ),
+          child: CircularProgressIndicator(color: Color(0xFFD8D8D8)),
         );
       },
     );
@@ -116,13 +110,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
-                  child: BookmarksStorage.sortType.value == type
-                      ? const Icon(
-                          Icons.check_circle_outline,
-                          size: 24.0,
-                          color: Color(0xFFD8D8D8),
-                        )
-                      : const SizedBox.shrink(),
+                  child:
+                      BookmarksStorage.sortType.value == type
+                          ? const Icon(
+                            Icons.check_circle_outline,
+                            size: 24.0,
+                            color: Color(0xFFD8D8D8),
+                          )
+                          : const SizedBox.shrink(),
                 ),
               ],
             ),
@@ -138,10 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         Text(
           text,
-          style: const TextStyle(
-            color: Color(0xFFD8D8D8),
-            fontSize: 16.0,
-          ),
+          style: const TextStyle(color: Color(0xFFD8D8D8), fontSize: 16.0),
         ),
         const SizedBox(width: 16.0),
         GestureDetector(
@@ -157,10 +149,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             child: Text(
               value ? 'ON' : 'OFF',
-              style: const TextStyle(
-                color: Color(0xFFD8D8D8),
-                fontSize: 16.0,
-              ),
+              style: const TextStyle(color: Color(0xFFD8D8D8), fontSize: 16.0),
             ),
           ),
         ),
@@ -213,30 +202,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: (_) async {
                 try {
                   _isLoadingNotifier.setTrue();
-                  var status = await Permission.storage.status;
-                  if (!status.isGranted) await Permission.storage.request();
-                  Directory tempDir =
-                      Directory('/storage/emulated/0/Download/');
-                  String tempPath = tempDir.path;
-                  final DateTime now = DateTime.now();
-                  var filePath =
-                      '$tempPath/bookmarks_${_formatter.format(now)}.json';
-                  await File(filePath)
-                      .writeAsString(BookmarksStorage.instance.exported());
+                  await ExternalData().export();
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Success'),
-                    backgroundColor: Colors.green,
-                    duration: Duration(milliseconds: 750),
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Success'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(milliseconds: 750),
+                    ),
+                  );
                 } catch (error, stackTrace) {
                   debugPrint('[ERROR] $error\n$stackTrace');
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Error occurred'),
-                    backgroundColor: Colors.red,
-                    duration: Duration(milliseconds: 750),
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Error occurred'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(milliseconds: 750),
+                    ),
+                  );
                 } finally {
                   await Future.delayed(const Duration(milliseconds: 100));
                   _isLoadingNotifier.setFalse();
@@ -263,6 +247,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   context: context,
                   builder: (context) => _createDialog(context),
                 );
+                setState(() {
+
+                });
                 await Future.delayed(const Duration(milliseconds: 350));
                 _isLoadingNotifier.setFalse();
               },
@@ -283,8 +270,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             margin: const EdgeInsets.all(16.0),
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-                color: const Color(0xFF454545),
-                borderRadius: BorderRadius.circular(8.0)),
+              color: const Color(0xFF454545),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -292,10 +280,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: EdgeInsets.all(8.0),
                   child: Text(
                     'Imported data will override local one. Are you sure?',
-                    style: TextStyle(
-                      color: Color(0xFFD8D8D8),
-                      fontSize: 16.0,
-                    ),
+                    style: TextStyle(color: Color(0xFFD8D8D8), fontSize: 16.0),
                   ),
                 ),
                 Row(
@@ -309,16 +294,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Expanded(
                       child: _createDialogBtn('Confirm', () async {
                         try {
-                          FilePickerResult? result =
-                              await FilePicker.platform.pickFiles(
-                            type: FileType.custom,
-                            allowedExtensions: ['json', 'txt'],
-                          );
+                          FilePickerResult? result = await FilePicker.platform
+                              .pickFiles(
+                                type: FileType.custom,
+                                allowedExtensions: ['json', 'txt'],
+                              );
                           String path = result?.files.single.path ?? '';
                           if (path.isEmpty) return;
                           File file = File(path);
                           String jsonData = await file.readAsString();
-                          await BookmarksStorage.instance.import(jsonData);
+                          await ExternalData().import(json.decode(jsonData));
                         } catch (error, stackTrace) {
                           debugPrint('[ERROR] $error\n$stackTrace');
                         }
@@ -342,10 +327,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: OutlinedButton(
             onPressed: onPressed,
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(
-                color: Color(0xFFD8D8D8),
-                width: 2.0,
-              ),
+              side: const BorderSide(color: Color(0xFFD8D8D8), width: 2.0),
             ),
             child: FittedBox(
               fit: BoxFit.scaleDown,

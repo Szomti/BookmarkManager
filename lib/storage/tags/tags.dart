@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TagsStorage with ChangeNotifier {
-  static const _iterableKey = 'TAGS_ITERABLE';
+  static const iterableKey = 'TAGS_ITERABLE';
   static final instance = TagsStorage._();
   final SharedPreferencesAsync prefs = SharedPreferencesAsync();
   final TagsList list = TagsList([]);
@@ -37,8 +37,34 @@ class TagsStorage with ChangeNotifier {
     return list.show.every((tag) => bookmark.tags.contains(tag));
   }
 
+  Iterable<Map<String, Object?>> exported() => list.toJson().toList();
+
+  Future<void> import(Iterable<Object?> jsonData) async {
+    Iterable<Tag> copy = List.of(list.tags);
+    bool inDanger = false;
+    try {
+      Iterable<Map<String, Object?>> jsonArray = jsonData.map(
+        (item) => item as Map<String, Object?>,
+      );
+      list.clear();
+      inDanger = true;
+      for (final jsonObject in jsonArray) {
+        list.addTag(Tag.fromJson(jsonObject));
+      }
+      await save();
+    } catch (error, stackTrace) {
+      debugPrint('[ERROR] $error\n$stackTrace');
+      if (!inDanger) return;
+      list.clear();
+      for (final tag in copy) {
+        list.addTag(tag);
+      }
+    }
+    notifyListeners();
+  }
+
   Future<void> load() async {
-    String tagsJsonData = await prefs.getString(_iterableKey) ?? '';
+    String tagsJsonData = await prefs.getString(iterableKey) ?? '';
     if (tagsJsonData.isEmpty) return;
     Iterable<Object?> decodedJson =
         json.decode(tagsJsonData) as Iterable<Object?>;
@@ -53,6 +79,6 @@ class TagsStorage with ChangeNotifier {
   }
 
   Future<void> save() async {
-    await prefs.setString(_iterableKey, json.encode(list.toJson()));
+    await prefs.setString(iterableKey, json.encode(list.toJson()));
   }
 }

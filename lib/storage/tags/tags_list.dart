@@ -34,9 +34,13 @@ class TagsList extends Iterable<Tag> {
     return [for (Tag tag in tags) tag.toJson()];
   }
 
-  void recreate(Iterable<Tag> tags) {
+  void clear() {
     _tags.clear();
     _tagsMap.clear();
+  }
+
+  void recreate(Iterable<Tag> tags) {
+    clear();
     _tags.addAll(tags);
     for (final tag in tags) {
       _tagsMap[tag.uuid] = tag;
