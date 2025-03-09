@@ -47,7 +47,6 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
             ),
             onPressed: (loading) async {
               await _viewModel.handleFilter(context);
-              _viewModel.handleFilterEdited();
             },
           ),
         ),

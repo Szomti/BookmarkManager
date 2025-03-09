@@ -8,9 +8,9 @@ class FilterBookmarks extends StatefulWidget {
 }
 
 class _FilterBookmarksState extends State<FilterBookmarks> {
-  final _storage = TagsStorage.instance;
-
-  Iterable<Tag> get _tagsList => _storage.list.tags;
+  final Iterable<Tag> _tagsList = SplayTreeSet.of(
+    tagsStorageHandler.getOrThrow().list,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class _FilterBookmarksState extends State<FilterBookmarks> {
         return GestureDetector(
           onTap: () async {
             tag.filterState = tag.filterState.next();
-            await _storage.save();
+            await tagsStorageHandler.saveToStorage();
           },
           child: Container(
             padding: const EdgeInsets.all(8.0),
@@ -69,7 +69,7 @@ class _FilterBookmarksState extends State<FilterBookmarks> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: CustomTag(_tagsList.elementAt(index)),
+                    child: CustomTag(tag),
                   ),
                 ),
               ],

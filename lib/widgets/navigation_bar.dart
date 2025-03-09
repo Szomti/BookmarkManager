@@ -13,12 +13,10 @@ class MainNavigationBar extends StatefulWidget {
 }
 
 class _MainNavigationBarState extends State<MainNavigationBar> {
+  static const _navigationBarHeight = 48.0;
   static const _mainColor = Color(0xFF535353);
-  static const _padding = EdgeInsets.only(
-    bottom: 8.0,
-    left: 16.0,
-    right: 16.0,
-  );
+  static const _indicatorColor = Color(0xFF7E7E7E);
+  static const _padding = EdgeInsets.only(bottom: 8.0, left: 16.0, right: 16.0);
 
   bool get _useMargin => widget.useMargin;
 
@@ -32,16 +30,18 @@ class _MainNavigationBarState extends State<MainNavigationBar> {
           children: [
             const SizedBox(height: 8.0),
             NavigationBar(
-              height: 48.0,
+              height: _navigationBarHeight,
               labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-              indicatorColor: const Color(0xFF7E7E7E),
+              indicatorColor: _indicatorColor,
               backgroundColor: _mainColor,
               selectedIndex: NavigationInfo().currentScreen.screenIndex,
-              destinations: ScreenOption.values
-                  .map((option) => option.getDestination())
-                  .toList(),
-              onDestinationSelected: (index) =>
-                  NavigationInfo().onDestinationSelected(index, context),
+              destinations:
+                  ScreenOption.values
+                      .map((option) => option.getDestination())
+                      .toList(),
+              onDestinationSelected:
+                  (index) =>
+                      NavigationInfo().onDestinationSelected(index, context),
             ),
           ],
         ),

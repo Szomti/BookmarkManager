@@ -1,44 +1,34 @@
 import 'package:flutter/material.dart';
 
 class ExpandedSection extends StatefulWidget {
-  final Widget child;
   final bool expand;
-  const ExpandedSection({super.key, this.expand = false, required this.child});
+  final Widget child;
+
+  const ExpandedSection({super.key, required this.expand, required this.child});
 
   @override
   State<StatefulWidget> createState() => _ExpandedSectionState();
 }
 
-class _ExpandedSectionState extends State<ExpandedSection> with SingleTickerProviderStateMixin {
-  late AnimationController expandController;
-  late Animation<double> animation;
+class _ExpandedSectionState extends State<ExpandedSection>
+    with SingleTickerProviderStateMixin {
+  late AnimationController expandController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 250),
+  );
+  late Animation<double> animation = CurvedAnimation(
+    parent: expandController,
+    curve: Curves.fastOutSlowIn,
+  );
+
+  bool get _expand => widget.expand;
+
+  Widget get _child => widget.child;
 
   @override
   void initState() {
     super.initState();
-    prepareAnimations();
     _runExpandCheck();
-  }
-
-  ///Setting up the animation
-  void prepareAnimations() {
-    expandController = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 250)
-    );
-    animation = CurvedAnimation(
-      parent: expandController,
-      curve: Curves.fastOutSlowIn,
-    );
-  }
-
-  void _runExpandCheck() {
-    if(widget.expand) {
-      expandController.forward();
-    }
-    else {
-      expandController.reverse();
-    }
   }
 
   @override
@@ -53,12 +43,20 @@ class _ExpandedSectionState extends State<ExpandedSection> with SingleTickerProv
     super.dispose();
   }
 
+  void _runExpandCheck() {
+    if (_expand) {
+      expandController.forward();
+    } else {
+      expandController.reverse();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizeTransition(
-        axisAlignment: 1.0,
-        sizeFactor: animation,
-        child: widget.child
+      axisAlignment: 1.0,
+      sizeFactor: animation,
+      child: _child,
     );
   }
 }

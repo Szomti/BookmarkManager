@@ -1,13 +1,13 @@
 library;
 
-import 'package:bookmark_manager/storage/bookmarks/bookmark.dart';
-import 'package:bookmark_manager/storage/tags/tag.dart';
-import 'package:bookmark_manager/storage/tags/tags_list.dart';
 import 'package:bookmark_manager/widgets/custom_tag.dart';
 import 'package:flutter/material.dart';
 
 import '../../colors.dart';
-import '../../storage/tags/tags.dart';
+import '../../models/bookmarks/bookmark.dart';
+import '../../models/tags/tag.dart';
+import '../../models/tags/tags_list.dart';
+import '../../storage/tags/handler.dart';
 
 part './header.dart';
 

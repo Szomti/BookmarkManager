@@ -53,10 +53,7 @@ class NewTagScreenViewModel with ChangeNotifier {
     borderColor = defaultBorderColor;
   }
 
-  Future<void> cancel(
-    ValueNotifier<bool> loading,
-    BuildContext context,
-  ) async {
+  Future<void> cancel(ValueNotifier<bool> loading, BuildContext context) async {
     if (context.mounted) Navigator.pop(context);
   }
 
@@ -68,7 +65,7 @@ class NewTagScreenViewModel with ChangeNotifier {
     final title = labelController.text;
     if (title.isEmpty) return;
     loading.value = true;
-    await TagsStorage.instance.addTag(
+    await tagsStorageHandler.getOrThrow().addTag(
       Tag(
         uuid: tag?.uuid,
         label: title,

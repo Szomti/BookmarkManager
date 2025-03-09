@@ -1,7 +1,9 @@
 part of 'library.dart';
 
 class _ListViewWidget extends StatefulWidget {
-  const _ListViewWidget();
+  final BookmarksScreenViewModel viewModel;
+
+  const _ListViewWidget(this.viewModel);
 
   @override
   State<StatefulWidget> createState() => _ListViewWidgetState();
@@ -10,24 +12,27 @@ class _ListViewWidget extends StatefulWidget {
 class _ListViewWidgetState extends State<_ListViewWidget> {
   static const _gapWidget = SizedBox(height: 16);
 
-  BookmarksStorage get _storage => BookmarksStorage.instance;
+  BookmarksScreenViewModel get _viewModel => widget.viewModel;
 
-  Iterable<Bookmark> get _bookmarks => _storage.searchItems;
+  Iterable<Bookmark> get _bookmarks =>
+      SplayTreeSet.of(_viewModel.searchedBookmarks);
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _storage,
-      builder: (BuildContext context, Widget? child) {
+      listenable: Listenable.merge([
+        bookmarksStorageHandler,
+        tagsStorageHandler,
+        _viewModel.bookmarksSearch,
+      ]),
+      builder: (BuildContext context, _) {
+        final bookmarks = _bookmarks;
         return ListView.builder(
           shrinkWrap: true,
-          itemCount: _bookmarks.length + 1,
+          itemCount: bookmarks.length + 1,
           itemBuilder: (context, index) {
-            if (index >= _bookmarks.length) return _gapWidget;
-            return _TileWidget(
-              key: UniqueKey(),
-              _bookmarks.elementAt(index),
-            );
+            if (index >= bookmarks.length) return _gapWidget;
+            return _TileWidget(key: UniqueKey(), bookmarks.elementAt(index));
           },
         );
       },

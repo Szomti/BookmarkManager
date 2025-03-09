@@ -85,11 +85,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _createSortByTile(SortType type) {
     return ListenableBuilder(
-      listenable: BookmarksStorage.sortType,
+      listenable: Bookmarks.sortType,
       builder: (BuildContext context, Widget? child) {
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => BookmarksStorage.instance.changeSortType(type),
+          onTap:
+              () => bookmarksStorageHandler.getOrThrow().changeSortType(type),
           child: Container(
             margin: const EdgeInsets.only(top: 8.0),
             padding: const EdgeInsets.all(8.0),
@@ -111,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
                   child:
-                      BookmarksStorage.sortType.value == type
+                      Bookmarks.sortType.value == type
                           ? const Icon(
                             Icons.check_circle_outline,
                             size: 24.0,
@@ -247,9 +248,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   context: context,
                   builder: (context) => _createDialog(context),
                 );
-                setState(() {
-
-                });
+                setState(() {});
                 await Future.delayed(const Duration(milliseconds: 350));
                 _isLoadingNotifier.setFalse();
               },

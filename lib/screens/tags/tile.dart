@@ -3,16 +3,19 @@ part of 'library.dart';
 class _TileWidget extends StatefulWidget {
   final Tag tag;
 
-  const _TileWidget(
-    this.tag, {
-    required Key key,
-  }) : super(key: key);
+  const _TileWidget(this.tag, {required Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _TileWidgetState();
 }
 
 class _TileWidgetState extends State<_TileWidget> {
+  static const _editBtnPadding = EdgeInsets.all(4.0);
+  static final _tileDecoration = BoxDecoration(
+    color: const Color(0xFF656565),
+    borderRadius: BorderRadius.circular(8),
+  );
+  static final _deleteTimeout = Duration(milliseconds: 1500);
   final BoolValueNotifier _confirmed = BoolValueNotifier(false);
 
   Tag get _tag => widget.tag;
@@ -27,10 +30,7 @@ class _TileWidgetState extends State<_TileWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(16).copyWith(bottom: 0),
-      decoration: BoxDecoration(
-        color: const Color(0xFF656565),
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: _tileDecoration,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -40,30 +40,19 @@ class _TileWidgetState extends State<_TileWidget> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomTag(
-                      _tag,
-                      forceCustom: true,
-                    ),
-                  ],
+                  children: [CustomTag(_tag, forceCustom: true)],
                 ),
               ),
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _createEditBaseBtn(
-                  'Edit',
-                  Icons.edit,
-                  () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => NewTagScreen(tag: _tag),
-                      ),
-                    );
-                  },
-                ),
+                _createEditBaseBtn('Edit', Icons.edit, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => NewTagScreen(tag: _tag)),
+                  );
+                }),
                 ListenableBuilder(
                   listenable: _confirmed,
                   builder: (_, __) {
@@ -86,10 +75,10 @@ class _TileWidgetState extends State<_TileWidget> {
 
   Future<void> _handleDelete() async {
     if (_confirmed.value) {
-      return TagsStorage.instance.removeTag(_tag);
+      return tagsStorageHandler.getOrThrow().removeTag(_tag);
     }
     _confirmed.setTrue();
-    Timer(const Duration(seconds: 2), _confirmed.setFalse);
+    Timer(_deleteTimeout, _confirmed.setFalse);
   }
 
   Widget _createEditBaseBtn(
@@ -102,8 +91,8 @@ class _TileWidgetState extends State<_TileWidget> {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.all(4.0),
-        padding: const EdgeInsets.all(4.0),
+        margin: _editBtnPadding,
+        padding: _editBtnPadding,
         decoration: BoxDecoration(
           color: const Color(0xFF7E7E7E),
           borderRadius: BorderRadius.circular(8.0),

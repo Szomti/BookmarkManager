@@ -1,16 +1,13 @@
-import 'dart:collection';
-
-import 'package:bookmark_manager/storage/tags/tag.dart';
-
-import 'tag_filter_state.dart';
+import '../../models/tags/tag.dart';
+import '../../models/tags/tag_filter_state.dart';
 
 class TagsList extends Iterable<Tag> {
-  final SplayTreeSet<Tag> _tags;
+  final Set<Tag> _tags;
   final Map<String, Tag> _tagsMap;
 
   TagsList(Iterable<Tag> tags)
-    : _tags = SplayTreeSet.of(tags),
-      _tagsMap = {for (final tag in tags) tag.uuid: tag};
+      : _tags = Set.of(tags),
+        _tagsMap = {for (final tag in tags) tag.uuid: tag};
 
   factory TagsList.fromJson(Iterable<Map<String, Object?>> jsonArray) {
     return TagsList([
@@ -28,7 +25,7 @@ class TagsList extends Iterable<Tag> {
       tags.where((tag) => tag.filterState == TagFilterState.show);
 
   @override
-  Iterator<Tag> get iterator => tags.iterator;
+  Iterator<Tag> get iterator => tags.toList().iterator;
 
   Iterable<Map<String, Object?>> toJson() {
     return [for (Tag tag in tags) tag.toJson()];

@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bookmark_manager/storage/bookmarks/handler.dart';
+import 'package:bookmark_manager/storage/tags/handler.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../bookmarks/bookmarks.dart';
+import '../../models/bookmarks/bookmarks.dart';
+import '../../models/tags/tags.dart';
 import '../settings/settings.dart';
-import '../tags/tags.dart';
 
 class ExternalData {
   final DateFormat _formatter = DateFormat('yyyy-MM-dd-HH-mm-ss-SSS');
@@ -23,18 +25,18 @@ class ExternalData {
 
   String dataToExport() {
     return json.encode({
-      BookmarksStorage.iterableKey: BookmarksStorage.instance.exported(),
-      TagsStorage.iterableKey: TagsStorage.instance.exported(),
+      Bookmarks.iterableKey: bookmarksStorageHandler.getOrThrow().exported(),
+      Tags.iterableKey: tagsStorageHandler.getOrThrow().exported(),
       SettingsStorage.settingsKey: SettingsStorage.instance.exported(),
     });
   }
 
   Future<void> import(Map<String, Object?> jsonObject) async {
-    await BookmarksStorage.instance.import(
-      jsonObject[BookmarksStorage.iterableKey] as Iterable<Object?>,
+    await bookmarksStorageHandler.getOrThrow().import(
+      jsonObject[Bookmarks.iterableKey] as Iterable<Object?>,
     );
-    await TagsStorage.instance.import(
-      jsonObject[TagsStorage.iterableKey] as Iterable<Object?>,
+    await tagsStorageHandler.getOrThrow().import(
+      jsonObject[Tags.iterableKey] as Iterable<Object?>,
     );
     await SettingsStorage.instance.import(
       jsonObject[SettingsStorage.settingsKey] as Map<String, Object?>,

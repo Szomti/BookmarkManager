@@ -5,9 +5,7 @@ class TagsScreenViewModel {
     unawaited(
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => const NewTagScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const NewTagScreen()),
       ),
     );
   }

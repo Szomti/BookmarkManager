@@ -9,10 +9,7 @@ class TagsScreen extends StatefulWidget {
 
 class _TagsScreenState extends State<TagsScreen> {
   static const _mainColor = Color(0xFF535353);
-  static const _padding = EdgeInsets.symmetric(
-    vertical: 8.0,
-    horizontal: 16.0,
-  );
+  static const _padding = EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0);
 
   final TagsScreenViewModel _viewModel = TagsScreenViewModel();
 

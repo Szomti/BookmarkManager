@@ -35,7 +35,7 @@ class NewBookmarkScreenViewModel {
     final subChapter = subChapterController.text;
     if (title.isEmpty || chapter == null) return;
     loading.value = true;
-    await BookmarksStorage.instance.addBookmark(
+    await bookmarksStorageHandler.getOrThrow().addBookmark(
       Bookmark(
         uuid: bookmark?.uuid,
         title: title,
@@ -45,7 +45,7 @@ class NewBookmarkScreenViewModel {
         chapter: Chapter(main: chapter, sub: subChapter),
       ),
     );
-    BookmarksStorage.changeEdited(false);
+    Bookmarks.changeEdited(false);
     await Future.delayed(_loadingDelay);
     loading.value = false;
     if (context.mounted) Navigator.pop(context);

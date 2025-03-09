@@ -9,9 +9,11 @@ class LoadingScreenViewModel {
 
   Future<void> handleLoading(BuildContext context) async {
     try {
-      await TagsStorage.instance.load();
-      await BookmarksStorage.instance.load();
-      await Future.delayed(const Duration(milliseconds: 250));
+      await Future.wait([
+        FilePicker.platform.clearTemporaryFiles(),
+        for (final storage in StorageSystem.storages) storage.getFromStorage(),
+        Future.delayed(const Duration(milliseconds: 500)),
+      ]);
       if (!context.mounted) return;
       unawaited(
         Navigator.pushReplacement(

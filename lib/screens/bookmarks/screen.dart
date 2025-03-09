@@ -10,10 +10,7 @@ class BookmarksScreen extends StatefulWidget {
 class _BookmarksScreenState extends State<BookmarksScreen> {
   static const _animationDuration = Duration(milliseconds: 300);
   static const _mainColor = Color(0xFF535353);
-  static const _padding = EdgeInsets.symmetric(
-    vertical: 8.0,
-    horizontal: 16.0,
-  );
+  static const _padding = EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0);
 
   final BookmarksScreenViewModel _viewModel = BookmarksScreenViewModel();
 
@@ -36,7 +33,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Expanded(child: _ListViewWidget()),
+            Expanded(child: _ListViewWidget(_viewModel)),
             Container(
               padding: _padding,
               color: _mainColor,
@@ -56,7 +53,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
 
   Widget _createSwitchingUpdateBar() {
     return ValueListenableBuilder(
-      valueListenable: BookmarksStorage.edited,
+      valueListenable: Bookmarks.edited,
       builder: (BuildContext context, value, Widget? child) {
         return AnimatedSwitcher(
           duration: _animationDuration,

@@ -15,7 +15,7 @@ class _TileWidgetState extends State<_TileWidget> {
 
   Tag get _tag => widget.tag;
 
-  Iterable<Tag> get _bookmarkTags => _bookmark.tags;
+  Iterable<Tag> get _bookmarkTags => _bookmark.createTags();
 
   bool get checked => _bookmarkTags.contains(_tag);
 
@@ -44,10 +44,7 @@ class _TileWidgetState extends State<_TileWidget> {
             Expanded(
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: CustomTag(
-                  _tag,
-                  forceCustom: true,
-                ),
+                child: CustomTag(_tag, forceCustom: true),
               ),
             ),
           ],
@@ -61,17 +58,18 @@ class _TileWidgetState extends State<_TileWidget> {
       padding: const EdgeInsets.only(right: 8.0),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 250),
-        child: check
-            ? Icon(
-                key: UniqueKey(),
-                Icons.check_box_rounded,
-                color: Colors.white,
-              )
-            : Icon(
-                key: UniqueKey(),
-                Icons.check_box_outline_blank_rounded,
-                color: Colors.white,
-              ),
+        child:
+            check
+                ? Icon(
+                  key: UniqueKey(),
+                  Icons.check_box_rounded,
+                  color: Colors.white,
+                )
+                : Icon(
+                  key: UniqueKey(),
+                  Icons.check_box_outline_blank_rounded,
+                  color: Colors.white,
+                ),
       ),
     );
   }

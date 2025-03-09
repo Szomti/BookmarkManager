@@ -1,8 +1,10 @@
-import 'package:bookmark_manager/storage/bookmarks/bookmarks.dart';
-import 'package:bookmark_manager/storage/tags/tag.dart';
-import 'package:bookmark_manager/storage/tags/tags.dart';
+import 'package:bookmark_manager/storage/tags/handler.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
+import '../tags/tag.dart';
+import '../tags/tags.dart';
+import 'bookmarks.dart';
 
 class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
   static const _uuidKey = 'uuid';
@@ -26,18 +28,21 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
     required DateTime updatedAt,
     required this.createdAt,
     required Chapter chapter,
-  })  : uuid = uuid ?? const Uuid().v4(),
-        _tagUuids = Set.of(tags),
-        _title = title,
-        _updatedAt = updatedAt,
-        _chapter = chapter;
+  }) : uuid = uuid ?? const Uuid().v4(),
+       _tagUuids = Set.of(tags),
+       _title = title,
+       _updatedAt = updatedAt,
+       _chapter = chapter;
+
+  Tags get _tagsFromStorage => tagsStorageHandler.getOrThrow();
 
   Map<String, Object?> toJson() {
-    final tagsUuids = TagsStorage.instance.list.map((tag) => tag.uuid);
+    final tagsUuids = _tagsFromStorage.list.map((tag) => tag.uuid);
     return {
       _uuidKey: uuid,
       _titleKey: _title,
-      _tagUuidsKey: _tagUuids.where((uuid) => tagsUuids.contains(uuid)).toList(),
+      _tagUuidsKey:
+          _tagUuids.where((uuid) => tagsUuids.contains(uuid)).toList(),
       _updatedAtKey: _updatedAt.millisecondsSinceEpoch,
       _createdAtKey: createdAt.millisecondsSinceEpoch,
       _chapterKey: _chapter.toJson(),
@@ -93,9 +98,10 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
 
   Iterable<String> get tagUuids => _tagUuids.toList();
 
-  Iterable<Tag> get tags => tagUuids
-      .map<Tag?>((tagUuid) => TagsStorage.instance.list.fromUuid(tagUuid))
-      .whereType<Tag>();
+  Iterable<Tag> createTags() =>
+      tagUuids
+          .map<Tag?>((tagUuid) => _tagsFromStorage.list.fromUuid(tagUuid))
+          .whereType<Tag>();
 
   void addTag(String tagUuid) {
     _tagUuids.add(tagUuid);
@@ -109,13 +115,13 @@ class Bookmark with ChangeNotifier implements Comparable<Bookmark> {
 
   void _handleEdit() {
     notifyListeners();
-    BookmarksStorage.changeEdited(true);
+    Bookmarks.changeEdited(true);
   }
 
   @override
   int compareTo(Bookmark other) {
     int result = 0;
-    switch (BookmarksStorage.sortType.value) {
+    switch (Bookmarks.sortType.value) {
       case SortType.creationStartWithOld:
         result = createdAt.compareTo(other.createdAt);
       case SortType.creationStartWithNew:
@@ -138,16 +144,10 @@ class Chapter {
 
   String get info => '$main$sub';
 
-  Chapter({
-    required this.main,
-    this.sub = '',
-  });
+  Chapter({required this.main, this.sub = ''});
 
   Map<String, Object?> toJson() {
-    return {
-      _mainKey: main,
-      _subKey: sub,
-    };
+    return {_mainKey: main, _subKey: sub};
   }
 
   static Chapter fromJson(Map<String, Object?> jsonObject) {

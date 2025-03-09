@@ -10,9 +10,8 @@ class BookmarkTagsScreen extends StatefulWidget {
 }
 
 class _BookmarkTagsScreenState extends State<BookmarkTagsScreen> {
-  final _storage = TagsStorage.instance;
 
-  TagsList get _tagsList => _storage.list;
+  TagsList get _tagsList => tagsStorageHandler.getOrThrow().list;
 
   Bookmark get _bookmark => widget.bookmark;
 

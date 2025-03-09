@@ -5,9 +5,9 @@ class BoolValueNotifier extends ValueNotifier<bool> {
 
   BoolValueNotifier(super.value);
 
-  bool get mounter => _mounted;
+  bool get mounted => _mounted;
 
-  bool get notMounter => !_mounted;
+  bool get notMounted => !_mounted;
 
   @override
   void dispose() {
@@ -16,12 +16,12 @@ class BoolValueNotifier extends ValueNotifier<bool> {
   }
 
   void setTrue() {
-    if(value || notMounter) return;
+    if(value || notMounted) return;
     value = true;
   }
 
   void setFalse() {
-    if(!value || notMounter) return;
+    if(!value || notMounted) return;
     value = false;
   }
 }

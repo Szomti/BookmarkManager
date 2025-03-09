@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TODO: Migrate to new storage system
 class SettingsStorage {
   static final instance = SettingsStorage._();
   static const settingsKey = 'SETTINGS';

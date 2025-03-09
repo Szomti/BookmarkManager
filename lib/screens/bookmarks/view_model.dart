@@ -2,11 +2,15 @@ part of 'library.dart';
 
 class BookmarksScreenViewModel {
   static const _delayDuration = Duration(milliseconds: 250);
-
   final searchController = TextEditingController();
+  ValueNotifier bookmarksSearch = ValueNotifier('');
 
-  BookmarksStorage get _storage => BookmarksStorage.instance;
+  BookmarksStorageHandler get _storage => bookmarksStorageHandler;
 
+  Bookmarks get bookmarks => _storage.getOrThrow();
+
+  Iterable<Bookmark> get searchedBookmarks =>
+      bookmarks.searchItems(bookmarksSearch.value);
 
   void init() {
     searchController.addListener(_handleSearchUpdate);
@@ -17,18 +21,16 @@ class BookmarksScreenViewModel {
     searchController.dispose();
   }
 
-  void handleFilterEdited() => _storage.handleFilterEdited();
-
   void _handleSearchUpdate() {
-    _storage.search = searchController.text;
+    bookmarksSearch.value = searchController.text;
   }
 
   Future<void> handleDiscard(ValueNotifier<bool> loading) async {
-    await _handleChange(loading, _storage.load);
+    await _handleChange(loading, _storage.getFromStorage);
   }
 
   Future<void> handleSave(ValueNotifier<bool> loading) async {
-    await _handleChange(loading, _storage.save);
+    await _handleChange(loading, _storage.saveToStorage);
   }
 
   Future<void> _handleChange(
@@ -39,7 +41,7 @@ class BookmarksScreenViewModel {
     await action();
     await Future.delayed(_delayDuration);
     loading.value = false;
-    BookmarksStorage.changeEdited(false);
+    Bookmarks.changeEdited(false);
   }
 
   Future<void> handleAddNew(BuildContext context) async {
