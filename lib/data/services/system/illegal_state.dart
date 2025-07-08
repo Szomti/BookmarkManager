@@ -1,0 +1,1 @@
+class IllegalStateException implements Exception {}

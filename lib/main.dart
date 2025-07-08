@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/loading/library.dart';
+import 'ui/loading/library.dart';
 
 void main() {
   runApp(const MyApp());
