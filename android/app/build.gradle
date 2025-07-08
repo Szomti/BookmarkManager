@@ -8,7 +8,9 @@ plugins {
 android {
     namespace = "com.szomti.bookmark_manager"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // TODO: Set the line below when upgrading flutter to 3.34+ as it will change the default
+    // ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
