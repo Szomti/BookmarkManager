@@ -44,17 +44,9 @@ class BookmarksScreenViewModel {
     Bookmarks.changeEdited(false);
   }
 
-  Future<void> handleAddNew(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const NewBookmarkScreen()),
-    );
-  }
+  Future<void> handleAddNew(BuildContext context) async =>
+      await context.push('/new-bookmark');
 
-  Future<void> handleFilter(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const FilterBookmarks()),
-    );
-  }
+  Future<void> handleFilter(BuildContext context) async =>
+      await context.push('/filter-bookmarks');
 }

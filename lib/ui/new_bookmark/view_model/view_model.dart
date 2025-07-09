@@ -19,7 +19,7 @@ class NewBookmarkScreenViewModel {
   }
 
   Future<void> cancel(ValueNotifier<bool> loading, BuildContext context) async {
-    if (context.mounted) Navigator.pop(context);
+    if (context.mounted) context.pop();
   }
 
   Future<void> saveBookmark(
@@ -45,7 +45,7 @@ class NewBookmarkScreenViewModel {
     Bookmarks.changeEdited(false);
     await Future.delayed(_loadingDelay);
     loading.value = false;
-    if (context.mounted) Navigator.pop(context);
+    if (context.mounted) context.pop();
   }
 
   TextInputFormatter onlyNumbersFormatter() {

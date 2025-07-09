@@ -1,13 +1,13 @@
 part of '../library.dart';
 
-class FilterBookmarks extends StatefulWidget {
-  const FilterBookmarks({super.key});
+class FilterBookmarksScreen extends StatefulWidget {
+  const FilterBookmarksScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _FilterBookmarksState();
+  State<StatefulWidget> createState() => _FilterBookmarksScreenState();
 }
 
-class _FilterBookmarksState extends State<FilterBookmarks> {
+class _FilterBookmarksScreenState extends State<FilterBookmarksScreen> {
   final Iterable<Tag> _tagsList = SplayTreeSet.of(
     tagsStorageHandler.getOrThrow().list,
   );

@@ -30,7 +30,7 @@ class _BottomBarWidgetState extends State<_BottomBarWidget> {
               padding: EdgeInsets.only(left: 4.0),
               child: Icon(Icons.add, color: Colors.white, size: 24),
             ),
-            onPressed: (loading) => _viewModel.handleAddNew(context),
+            onPressed: (loading) async => _viewModel.handleAddNew(context),
           ),
         ),
       ],

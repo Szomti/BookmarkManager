@@ -15,12 +15,7 @@ class LoadingScreenViewModel {
         Future.delayed(const Duration(milliseconds: 500)),
       ]);
       if (!context.mounted) return;
-      unawaited(
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const BookmarksScreen()),
-        ),
-      );
+      context.go('/bookmarks');
     } catch (error, stackTrace) {
       await Future.delayed(const Duration(milliseconds: 100));
       errorOccurred.setTrue();

@@ -1,6 +1,5 @@
+import 'package:bookmark_manager/routing/app_router.dart';
 import 'package:flutter/material.dart';
-
-import 'ui/loading/library.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Bookmark Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: Typography.whiteMountainView,
       ),
-      home: const LoadingScreen(),
+      routerConfig: router,
     );
   }
 }

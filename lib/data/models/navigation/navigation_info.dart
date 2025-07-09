@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../ui/bookmarks/library.dart';
-import '../../../ui/settings/library.dart';
-import '../../../ui/tags/library.dart';
 import 'screen_option.dart';
 
 class NavigationInfo {
@@ -19,21 +17,11 @@ class NavigationInfo {
     currentScreen = ScreenOption.values.firstWhere(
       (option) => option.screenIndex == index,
     );
-    unawaited(
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => switch (index) {
-            BookmarksScreenOption.index => const BookmarksScreen(),
-            TagsScreenOption.index => const TagsScreen(),
-            SettingsScreenOption.index => const SettingsScreen(),
-            int() => throw UnimplementedError(),
-          },
-          transitionDuration: const Duration(milliseconds: 300),
-          transitionsBuilder: (_, a, _, c) =>
-              FadeTransition(opacity: a, child: c),
-        ),
-      ),
-    );
+    context.go(switch (index) {
+      BookmarksScreenOption.index => '/bookmarks',
+      TagsScreenOption.index => '/tags',
+      SettingsScreenOption.index => '/settings',
+      int() => throw UnimplementedError(),
+    });
   }
 }

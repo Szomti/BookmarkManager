@@ -54,7 +54,7 @@ class NewTagScreenViewModel with ChangeNotifier {
   }
 
   Future<void> cancel(ValueNotifier<bool> loading, BuildContext context) async {
-    if (context.mounted) Navigator.pop(context);
+    if (context.mounted) context.pop();
   }
 
   Future<void> saveTag(
@@ -76,6 +76,6 @@ class NewTagScreenViewModel with ChangeNotifier {
     );
     await Future.delayed(_loadingDelay);
     loading.value = false;
-    if (context.mounted) Navigator.pop(context);
+    if (context.mounted) context.pop();
   }
 }

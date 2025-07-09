@@ -62,7 +62,7 @@ class _ExpandedSectionWidgetState extends State<_ExpandedSectionWidget> {
                               main: _bookmark.chapter.main,
                               sub: _subChapterController.text,
                             );
-                            if (mounted) Navigator.pop(context);
+                            if (mounted) context.pop();
                           }),
                         ],
                       ),
@@ -74,22 +74,14 @@ class _ExpandedSectionWidgetState extends State<_ExpandedSectionWidget> {
           );
         }),
         _createEditBaseBtn('Full Edit', Icons.edit, () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => NewBookmarkScreen(bookmark: _bookmark),
-            ),
-          );
+          context.push('/new-bookmark', extra: _bookmark);
         }),
         _createEditBaseBtn('Edit Tags', Icons.tag_outlined, () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => BookmarkTagsScreen(_bookmark)),
-          );
+          context.push('/bookmark-tags', extra: _bookmark);
         }),
         ListenableBuilder(
           listenable: _confirmed,
-          builder: (_, __) {
+          builder: (_, _) {
             return _createEditBaseBtn(
               'Delete',
               Icons.delete_forever,

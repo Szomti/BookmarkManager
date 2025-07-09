@@ -118,14 +118,14 @@ class _NewTagScreenState extends State<NewTagScreen> {
                 text: 'Reset',
                 onPressed: (_) async {
                   resetColor();
-                  Navigator.of(context).pop();
+                  if (context.mounted) context.pop();
                   _changeColor(colorCallback, onColorChanged, resetColor);
                 },
               ),
               CustomOutlinedButton(
                 text: 'Select',
                 onPressed: (_) async {
-                  Navigator.of(context).pop();
+                  if (context.mounted) context.pop();
                   _viewModel.notify();
                 },
               ),

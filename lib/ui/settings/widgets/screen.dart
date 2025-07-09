@@ -285,7 +285,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     Expanded(
                       child: _createDialogBtn('Cancel', () {
-                        if (context.mounted) Navigator.pop(context);
+                        if (context.mounted) context.pop();
                       }),
                     ),
                     const SizedBox(width: 8.0),
@@ -305,7 +305,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         } catch (error, stackTrace) {
                           debugPrint('[ERROR] $error\n$stackTrace');
                         }
-                        if (context.mounted) Navigator.pop(context);
+                        if (context.mounted) context.pop();
                       }),
                     ),
                   ],

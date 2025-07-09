@@ -5,10 +5,11 @@ Simple app for managing your bookmarks
 ### Notice - Currently refactoring
 
 - Flutter Docs
-    - Project structure
+    - [DONE] Project structure
+    - Responsive UI
     - Design patterns
     - Recommendations
 - Packages
-    - Provider
-    - GoRouter
-    - Freezed
+    - provider
+    - [DONE] go_router
+    - freezed

@@ -48,10 +48,7 @@ class _TileWidgetState extends State<_TileWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _createEditBaseBtn('Edit', Icons.edit, () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => NewTagScreen(tag: _tag)),
-                  );
+                  context.push('/new-tag', extra: _tag);
                 }),
                 ListenableBuilder(
                   listenable: _confirmed,
