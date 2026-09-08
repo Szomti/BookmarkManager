@@ -14,7 +14,10 @@ class MyApp extends StatelessWidget {
       title: 'Bookmark Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.dark,
+          seedColor: Colors.black,
+        ),
         useMaterial3: true,
         textTheme: Typography.whiteMountainView,
       ),
