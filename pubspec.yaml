@@ -1,5 +1,5 @@
 name: bookmark_manager
-description: "Bookmark manager"
+description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,11 +16,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 2.0.0+1
 
 environment:
-  sdk: '>=3.8.1 <4.0.0'
-  flutter: '3.32.5'
+  sdk: ^3.13.4
+  flutter: ^3.47.5
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,25 +31,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  collection: ^1.19.1
-  cupertino_icons: ^1.0.8
-  go_router: ^16.0.0
-  shared_preferences: ^2.5.3
-  permission_handler: ^12.0.1
-  path_provider: ^2.1.5
-  file_picker: ^10.2.0
-  flutter_colorpicker: ^1.1.0
-  uuid: ^4.5.1
-  intl: ^0.20.2
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.1
+  material_ui: ^1.4.0
+  material_symbols_icons: ^4.2960.0
+  meta: ^1.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -75,10 +65,10 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware
+  # https://flutter.dev/to/resolution-aware-images
 
   # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
+  # https://flutter.dev/to/asset-from-package
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
@@ -98,4 +88,4 @@ flutter:
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+  # see https://flutter.dev/to/font-from-package
