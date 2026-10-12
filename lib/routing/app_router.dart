@@ -19,6 +19,12 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/bookmarks',
               builder: (_, _) => const BookmarksPage(),
+              routes: [
+                GoRoute(
+                  path: 'form',
+                  builder: (_, _) => const BookmarkFormPage(),
+                ),
+              ],
             ),
           ],
         ),

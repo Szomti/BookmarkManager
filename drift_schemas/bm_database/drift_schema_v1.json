@@ -45,7 +45,7 @@
             "name": "website",
             "getter_name": "website",
             "moor_type": "string",
-            "nullable": true,
+            "nullable": false,
             "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
@@ -257,7 +257,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"books_table\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"name\" TEXT NOT NULL, \"website\" TEXT NULL, \"chapter\" INTEGER NOT NULL, \"chapter_suffix\" TEXT NOT NULL, \"page\" INTEGER NULL, \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"books_table\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"name\" TEXT NOT NULL, \"website\" TEXT NOT NULL, \"chapter\" INTEGER NOT NULL, \"chapter_suffix\" TEXT NOT NULL, \"page\" INTEGER NULL, \"created_at\" INTEGER NOT NULL, \"updated_at\" INTEGER NOT NULL);"
         }
       ]
     },

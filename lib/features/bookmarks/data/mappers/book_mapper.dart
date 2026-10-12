@@ -1,7 +1,9 @@
 import '../../../../core/database/app_database.dart';
+import '../../../tags/data/mappers/tag_mapper.dart';
 import '../../../tags/domain/entities/tags.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/entities/bookmark.dart';
+import '../dao/books_dao.dart';
 
 extension BookExtension on Book {
   /// Conversion loses tags
@@ -34,5 +36,11 @@ extension BookRowExtension on BookRow {
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
+  }
+}
+
+extension BookWithTagsExtension on BookWithTags {
+  Book toEntity() {
+    return book.toEntity(Tags(tags.map((tag) => tag.toEntity())));
   }
 }

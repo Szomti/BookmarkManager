@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../core/theme/app_theme.dart';
 import '../routing/app_router.dart';
 
 class MyApp extends ConsumerWidget {
@@ -11,13 +12,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: .fromSeed(
-          seedColor: const Color(0xFF0466C8),
-          brightness: Brightness.dark,
-        ),
-        brightness: Brightness.dark,
-      ),
+      theme: AppTheme.dark(),
     );
   }
 }

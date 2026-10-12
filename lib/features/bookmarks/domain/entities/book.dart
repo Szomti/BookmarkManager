@@ -10,7 +10,7 @@ part 'book.freezed.dart';
 final class Book with _$Book {
   final int id;
   final String name;
-  final String? website;
+  final String website;
   final Tags tags;
   final Bookmark bookmark;
   final DateTime createdAt;

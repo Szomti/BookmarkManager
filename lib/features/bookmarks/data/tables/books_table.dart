@@ -6,7 +6,7 @@ class BooksTable extends Table {
 
   TextColumn get name => text()();
 
-  TextColumn get website => text().nullable()();
+  TextColumn get website => text()();
 
   IntColumn get chapter => integer()();
 
