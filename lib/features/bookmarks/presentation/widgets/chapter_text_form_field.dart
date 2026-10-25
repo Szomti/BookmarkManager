@@ -10,8 +10,8 @@ class ChapterTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.number,
+      textInputAction: .next,
+      keyboardType: .number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         label: Text.rich(

@@ -12,7 +12,7 @@ class BookmarksPage extends StatelessWidget {
         const Text('Bookmarks'),
         TextButton(
           onPressed: () => context.go('/bookmarks/form'),
-          child: const Text('Go to Bookmark form [DEV]'),
+          child: const Text('Go to Bookmark Form [DEV]'),
         ),
       ],
     );

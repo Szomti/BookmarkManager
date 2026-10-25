@@ -10,8 +10,8 @@ class PageTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      textInputAction: TextInputAction.done,
-      keyboardType: TextInputType.number,
+      textInputAction: .done,
+      keyboardType: .number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: const InputDecoration(label: Text('Page')),
     );

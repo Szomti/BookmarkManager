@@ -11,7 +11,7 @@ typedef BookWithTags = ({BookRow book, List<TagRow> tags});
 
 @DriftAccessor(tables: [BooksTable, TagsTable, BookTagsTable])
 class BooksDao extends DatabaseAccessor<AppDatabase> with _$BooksDaoMixin {
-  BooksDao(super.attachedDatabase);
+  new(super.attachedDatabase);
 
   Stream<List<BookWithTags>> watchBooksWithTags() {
     final query = select(booksTable).join([

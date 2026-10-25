@@ -12,6 +12,13 @@ class BookmarkFormActions extends StatelessWidget {
     return Row(
       children: [
         Expanded(
+          child: OutlinedButton(
+            onPressed: () => context.pop(),
+            child: const Text('Cancel'),
+          ),
+        ),
+        const SizedBox(width: 16.0),
+        Expanded(
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: SizedBox(
@@ -23,13 +30,6 @@ class BookmarkFormActions extends StatelessWidget {
                 icon: const Icon(Symbols.save, fill: 1.0),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 16.0),
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () => context.pop(),
-            child: const Text('Cancel'),
           ),
         ),
       ],

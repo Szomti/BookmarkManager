@@ -10,5 +10,5 @@ class TagsTable extends Table {
 
   IntColumn get backgroundColor => integer()();
 
-  IntColumn get foregroundColor => integer()();
+  IntColumn get textColor => integer()();
 }

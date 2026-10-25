@@ -35,26 +35,36 @@ class _BookmarkFormState extends ConsumerState<BookmarkForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            NameTextFormField(_nameController),
-            const SizedBox(height: 16.0),
-            ChapterTextFormField(_chapterController),
-            const SizedBox(height: 16.0),
-            WebsiteTextFormField(_websiteController),
-            const SizedBox(height: 16.0),
-            ChapterSuffixTextFormField(_chapterSuffixController),
-            const SizedBox(height: 16.0),
-            PageTextFormField(_pageController),
-            const SizedBox(height: 16.0),
-            const SelectTagsSection(),
-            const SizedBox(height: 16.0),
-            BookmarkFormActions(
-              onSave: ref.watch(addBookmarkProvider).isLoading ? null : save,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 16.0),
+                  NameTextFormField(_nameController),
+                  const SizedBox(height: 16.0),
+                  ChapterTextFormField(_chapterController),
+                  const SizedBox(height: 16.0),
+                  WebsiteTextFormField(_websiteController),
+                  const SizedBox(height: 16.0),
+                  ChapterSuffixTextFormField(_chapterSuffixController),
+                  const SizedBox(height: 16.0),
+                  PageTextFormField(_pageController),
+                  const SizedBox(height: 16.0),
+                  const SelectTagsSection(),
+                  const SizedBox(height: 16.0),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+          BookmarkFormActions(
+            onSave: ref.watch(addBookmarkProvider.select((s) => s.isLoading))
+                ? null
+                : save,
+          ),
+          const SizedBox(height: 16.0),
+        ],
       ),
     );
   }

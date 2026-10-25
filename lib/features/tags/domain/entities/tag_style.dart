@@ -9,11 +9,11 @@ part 'tag_style.freezed.dart';
 final class TagStyle with _$TagStyle {
   final Color borderColor;
   final Color backgroundColor;
-  final Color foregroundColor;
+  final Color textColor;
 
   const TagStyle({
     required this.borderColor,
     required this.backgroundColor,
-    required this.foregroundColor,
+    required this.textColor,
   });
 }

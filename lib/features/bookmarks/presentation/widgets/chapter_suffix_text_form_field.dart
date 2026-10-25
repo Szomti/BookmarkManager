@@ -9,7 +9,7 @@ class ChapterSuffixTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      textInputAction: TextInputAction.next,
+      textInputAction: .next,
       decoration: const InputDecoration(label: Text('Chapter Suffix')),
     );
   }

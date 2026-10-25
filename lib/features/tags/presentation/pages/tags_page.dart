@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 class TagsPage extends StatelessWidget {
@@ -6,6 +7,15 @@ class TagsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Tags'));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Tags'),
+        TextButton(
+          onPressed: () => context.go('/tags/form'),
+          child: const Text('Go to Tag Form [DEV]'),
+        ),
+      ],
+    );
   }
 }

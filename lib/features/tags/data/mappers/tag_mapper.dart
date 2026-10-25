@@ -11,7 +11,7 @@ extension TagExtension on Tag {
       label: label,
       borderColor: style.borderColor.toARGB32(),
       backgroundColor: style.backgroundColor.toARGB32(),
-      foregroundColor: style.foregroundColor.toARGB32(),
+      textColor: style.textColor.toARGB32(),
     );
   }
 }
@@ -24,7 +24,7 @@ extension TagRowExtension on TagRow {
       style: TagStyle(
         borderColor: Color(borderColor),
         backgroundColor: Color(backgroundColor),
-        foregroundColor: Color(foregroundColor),
+        textColor: Color(textColor),
       ),
     );
   }

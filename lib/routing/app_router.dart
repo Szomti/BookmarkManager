@@ -12,7 +12,15 @@ final appRouter = GoRouter(
       builder: (_, _, navigationShell) => ShellWithNavBar(navigationShell),
       branches: [
         StatefulShellBranch(
-          routes: [GoRoute(path: '/tags', builder: (_, _) => const TagsPage())],
+          routes: [
+            GoRoute(
+              path: '/tags',
+              builder: (_, _) => const TagsPage(),
+              routes: [
+                GoRoute(path: 'form', builder: (_, _) => const TagFormPage()),
+              ],
+            ),
+          ],
         ),
         StatefulShellBranch(
           routes: [
